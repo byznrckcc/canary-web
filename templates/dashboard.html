@@ -3,103 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canary-Web // SOC Dashboard</title>
+    <title>Canary-Web // Enterprise SOC Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        body { background-color: #0b0c10; color: #c5c6c7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar { background-color: #1f2833; border-bottom: 2px solid #45f3ff; }
-        .card-custom { background-color: #1f2833; border: 1px solid #2f3e46; border-radius: 8px; }
-        .text-neon { color: #45f3ff; font-family: monospace; }
-        .table-dark-custom { background-color: #1f2833; color: #c5c6c7; }
-        .badge-critical { background-color: #ff3333; color: white; box-shadow: 0 0 10px #ff3333; }
-        .badge-high { background-color: #ff9900; color: black; }
-        .badge-medium { background-color: #ffff00; color: black; }
-        .badge-low { background-color: #00ff00; color: black; }
-        .fingerprint-text { font-family: monospace; font-size: 11px; color: #8892b0; }
+        :root {
+            --bg-main: #060709;
+            --bg-card: #12141c;
+            --border-color: #1f2430;
+            --text-primary: #e2e8f0;
+            --neon-cyan: #00f2fe;
+            --neon-red: #ff2a5f;
+            --neon-orange: #ff9f43;
+            --neon-green: #10ac84;
+        }
+
+        body { 
+            background-color: var(--bg-main); 
+            color: var(--text-primary); 
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .font-cyber { font-family: 'Share Tech Mono', sans-serif; }
+        
+        .navbar-cyber { 
+            background-color: var(--bg-card); 
+            border-bottom: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .card-cyber { 
+            background-color: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .card-cyber:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+        }
+
+        .text-neon { color: var(--neon-cyan); text-shadow: 0 0 5px rgba(0, 242, 254, 0.5); }
+        .search-cyber {
+            background-color: var(--bg-main) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+        .search-cyber:focus {
+            border-color: var(--neon-cyan) !important;
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.3) !important;
+        }
+
+        /* Canlı Tehdit Seviyesi Badgeleri ve Yanıp Sönme Efektleri */
+        @keyframes pulse-critical {
+            0% { box-shadow: 0 0 5px var(--neon-red); }
+            50% { box-shadow: 0 0 18px var(--neon-red); }
+            100% { box-shadow: 0 0 5px var(--neon-red); }
+        }
+        .badge-critical { 
+            background-color: var(--neon-red); color: #fff; 
+            animation: pulse-critical 2s infinite; font-weight: bold;
+        }
+        .badge-high { background-color: var(--neon-orange); color: #000; font-weight: bold; }
+        .badge-medium { background-color: #ffff00; color: #000; }
+        .badge-low { background-color: var(--neon-green); color: #fff; }
+
+        .table-cyber { background-color: var(--bg-card); color: var(--text-primary); }
+        .table-cyber th { border-bottom: 2px solid var(--border-color); color: var(--neon-cyan); }
+        .table-cyber td { border-bottom: 1px solid var(--border-color); }
+        
+        .fingerprint-text { font-size: 11px; color: #718096; word-break: break-all; }
+        
+        /* Özel Kaydırma Çubuğu (Scrollbar) */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-dark px-4">
-        <span class="navbar-brand mb-0 h1 text-neon">🔒 CANARY-WEB // Honeytoken Takip Sistemi</span>
-        <span class="badge bg-secondary">🔗 Sunucu Aktif: 0.0.0.0:5000</span>
+    <nav class="navbar navbar-dark navbar-cyber px-4 py-3">
+        <span class="navbar-brand mb-0 h1 font-cyber text-neon fs-3">🛰️ CANARY-WEB // CYBER DECEPTION COMMAND CENTER</span>
+        <div class="d-flex align-items-center">
+            <span class="badge bg-dark border border-success text-success me-2 px-3 py-2">● SYSTEM: OPERATIONAL</span>
+            <span class="badge bg-secondary px-3 py-2">v1.0.0 Stable</span>
+        </div>
     </nav>
 
     <div class="container-fluid my-4 px-4">
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card card-custom p-3">
-                    <h5>Toplam Tetiklenme (Hits)</h5>
-                    <h2 class="text-neon d-flex justify-content-between align-items-center">
-                        {{ total_hits }}
-                        <span style="font-size: 24px;">🚨</span>
-                    </h2>
+        
+        <div class="row g-4 mb-4">
+            <div class="col-xl-8 col-lg-7">
+                <div class="row g-3 h-100">
+                    <div class="col-md-4">
+                        <div class="card card-cyber p-4 h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h6 class="text-muted text-uppercase small">TOPLAM ALARM (TOTAL HITS)</h6>
+                                <h1 class="text-neon font-cyber display-4 mt-2">{{ total_hits }}</h1>
+                            </div>
+                            <div class="text-neon fs-2">🚨</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-cyber p-4 h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h6 class="text-muted text-uppercase small">KRİTİK TEHDİT (DATACENTER/VPN)</h6>
+                                <h1 class="text-danger font-cyber display-4 mt-2">{{ critical_hits }}</h1>
+                            </div>
+                            <div class="text-danger fs-2">💀</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-cyber p-4 h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h6 class="text-muted text-uppercase small">İZLENEN HONEYTOKEN</h6>
+                                <h1 class="text-success font-cyber display-4 mt-2">{{ unique_tokens }}</h1>
+                            </div>
+                            <div class="text-success fs-2">🎯</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card card-custom p-3">
-                    <h5>Kritik Tehditler (DataCenter/VPN)</h5>
-                    <h2 class="text-danger d-flex justify-content-between align-items-center">
-                        {{ critical_hits }}
-                        <span style="font-size: 24px;">💀</span>
-                    </h2>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-custom p-3">
-                    <h5>Aktif İzlenen Token Sayısı</h5>
-                    <h2 class="text-success d-flex justify-content-between align-items-center">
-                        {{ unique_tokens }}
-                        <span style="font-size: 24px;">🎯</span>
-                    </h2>
+            
+            <div class="col-xl-4 col-lg-5">
+                <div class="card card-cyber p-3 text-center d-flex flex-column align-items-center justify-content-center">
+                    <h6 class="text-muted text-uppercase small mb-2">Tehdit Seviyesi Dağılım Grafiği</h6>
+                    <div style="width: 100%; max-width: 220px; margin: 0 auto;">
+                        <canvas id="threatChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card card-custom p-4">
-            <h4 class="mb-3 text-neon">Adli Bilişim & Olay Müdahale Logları</h4>
+        <div class="card card-cyber p-4">
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-6">
+                    <h4 class="text-neon font-cyber mb-0">🛡️ ADLİ BİLİŞİM & OLAY MÜDAHALE PIPELINE</h4>
+                </div>
+                <div class="col-md-6 mt-2 mt-md-0">
+                    <input type="text" id="tableSearch" class="form-control search-cyber" placeholder="🔍 IP Adresi, Token ID veya Detay Ara (Real-time Filter)...">
+                </div>
+            </div>
+            
             <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle table-dark-custom">
+                <table class="table table-dark table-hover align-middle table-cyber">
                     <thead>
-                        <tr style="border-bottom: 2px solid #45f3ff;">
+                        <tr>
                             <th>Zaman (UTC)</th>
                             <th>Token ID</th>
-                            <th>IP Adresi</th>
+                            <th>Ağ Katmanı (IP)</th>
                             <th>Tehdit Seviyesi</th>
-                            <th>Ekran</th>
+                            <th>Ekran Boyutu</th>
                             <th>Sistem Dili</th>
-                            <th>Cihaz Parmak İzi (SHA-256 Fallback)</th>
+                            <th>Cihaz Parmak İzi (SHA-256)</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="logTableBody">
                         {% if not hits %}
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">Henüz tetiklenen bir alarm yok. Sistem dinlemede...</td>
+                            <td colspan="7" class="text-center py-5 text-muted">Henüz tetiklenen bir alarm yok. Bal küpleri aktif, sistem dinlemede...</td>
                         </tr>
                         {% endif %}
                         {% for hit in hits %}
                         <tr>
-                            <td>{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                            <td><span class="badge bg-dark text-info">{{ hit.token_id }}</span></td>
+                            <td><small>{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
+                            <td><span class="badge bg-dark text-info border border-info">{{ hit.token_id[:13] }}...</span></td>
                             <td>
                                 <strong>{{ hit.ip_address }}</strong>
                                 {% if hit.is_vpn_or_tor %}
-                                <br><small class="text-danger">(Datacenter/VPN IP)</small>
+                                <span class="d-block text-danger" style="font-size: 10px;">⚠️ PROXY/DATACENTER DETECTED</span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if hit.threat_level.value == 'Critical' %}
-                                <span class="badge badge-critical">CRITICAL</span>
+                                <span class="badge badge-critical px-2 py-1">CRITICAL</span>
                                 {% elif hit.threat_level.value == 'High' %}
-                                <span class="badge badge-high">HIGH</span>
+                                <span class="badge badge-high px-2 py-1">HIGH</span>
                                 {% elif hit.threat_level.value == 'Medium' %}
-                                <span class="badge badge-medium">MEDIUM</span>
+                                <span class="badge badge-medium px-2 py-1">MEDIUM</span>
                                 {% else %}
-                                <span class="badge badge-low">LOW</span>
+                                <span class="badge badge-low px-2 py-1">LOW</span>
                                 {% endif %}
                             </td>
-                            <td>{{ hit.screen_resolution or 'N/A' }}</td>
-                            <td><small>{{ hit.system_languages or 'N/A' }}</small></td>
+                            <td>{{ hit.screen_resolution or 'N/A (CLI Tool)' }}</td>
+                            <td><small class="text-muted">{{ hit.system_languages or 'N/A' }}</small></td>
                             <td class="fingerprint-text">{{ hit.browser_fingerprint or 'Hesaplanamadı' }}</td>
                         </tr>
                         {% endfor %}
@@ -110,8 +200,49 @@
     </div>
 
     <footer class="text-center my-4 text-muted">
-        <small>Hazırlayan: Beyzanur Çakıcı // İstinye Üniversitesi Final Projesi</small>
+        <small>Canary-Web // Bilişim Güvenliği Teknolojisi Final Projesi // Beyzanur Çakıcı</small>
     </footer>
 
+    <script>
+        // 1. REAL-TIME LOKAL ARAMA MOTORU (SAYFA YENİLEMEDEN FİLTRELEME)
+        document.getElementById('tableSearch').addEventListener('keyup', function() {
+            let searchVal = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#logTableBody tr');
+            
+            rows.forEach(row => {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchVal) ? '' : 'none';
+            });
+        });
+
+        // 2. CHART.JS İLE TEHDİT SEVİYESİ DAĞILIM GRAFİĞİ ANALİZİ
+        // Jinja2 verilerini JavaScript dizisine aktarıp dinamik sayım yapıyoruz
+        const levels = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+        {% for hit in hits %}
+            levels["{{ hit.threat_level.value }}"]++;
+        {% endfor %}
+
+        const ctx = document.getElementById('threatChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Critical', 'High', 'Medium', 'Low'],
+                datasets: [{
+                    data: [levels.Critical, levels.High, levels.Medium, levels.Low],
+                    backgroundColor: ['#ff2a5f', '#ff9f43', '#ffff00', '#10ac84'],
+                    borderColor: '#12141c',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false } // Kart alanı dar olduğu için lejantı gizleyip temiz tuttuk
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
 </body>
 </html>
