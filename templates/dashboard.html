@@ -3,180 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canary-Web // Strategic Cyber Command Mesh</title>
+    <title>Canary-Web // Tactical SOC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --c-bg: #020408;
-            --c-panel: rgba(6, 11, 25, 0.85);
-            --c-cyan: #00f2fe;
-            --c-red: #ff2a5f;
-            --c-green: #39ff14;
-            --c-orange: #ff9f43;
-            --c-border: #13223f;
-        }
-
         body { 
-            background-color: var(--c-bg); color: #abb2bf; font-family: 'Share Tech Mono', monospace;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(0, 242, 254, 0.02), rgba(255, 42, 95, 0.01), rgba(0, 0, 0, 0.02));
-            background-size: 100% 4px, 6px 100%; overflow-x: hidden;
+            background-color: #050811 !important; 
+            color: #e2e8f0; 
+            font-family: 'Share Tech Mono', monospace;
+            padding: 0; margin: 0;
         }
-
-        .font-cyber { font-family: 'Orbitron', sans-serif; }
-        .text-glow-cyan { color: var(--c-cyan); text-shadow: 0 0 10px rgba(0, 242, 254, 0.6); }
-        .text-glow-red { color: var(--c-red); text-shadow: 0 0 10px rgba(255, 42, 95, 0.6); }
-
+        .navbar-cyber {
+            background-color: #0c1020 !important;
+            border-bottom: 2px solid #00f2fe;
+        }
         .panel-tactical {
-            background: var(--c-panel); border: 1px solid var(--c-border); border-radius: 4px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.7), inset 0 0 15px rgba(0, 242, 254, 0.03);
-            backdrop-filter: blur(4px); position: relative;
+            background-color: #0f1526 !important; 
+            border: 1px solid #1e293b; 
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
         }
-        .panel-tactical::after {
-            content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 6px; background: var(--c-cyan);
-        }
-
-        /* Canlı Terminal Simülasyonu */
+        .text-neon-cyan { color: #00f2fe; text-shadow: 0 0 5px rgba(0, 242, 254, 0.5); font-family: 'Orbitron', sans-serif; }
+        .text-neon-red { color: #ff2a5f; text-shadow: 0 0 5px rgba(255, 42, 95, 0.5); font-family: 'Orbitron', sans-serif; }
+        
+        .metric-value { font-size: 36px; font-weight: bold; margin-top: 5px; }
+        
         .terminal-stream {
-            height: 160px; overflow-y: auto; background: #010204; border: 1px solid #101c33;
-            font-size: 11px; color: #51afef; padding: 8px; font-family: monospace;
+            height: 140px; overflow-y: auto; background-color: #02040a; 
+            border: 1px solid #1e293b; font-size: 12px; color: #39ff14; padding: 10px; font-family: monospace;
         }
-
-        .table-tactical { color: #cbd5e1; font-size: 13px; }
-        .table-tactical th { color: var(--c-cyan); border-bottom: 2px solid var(--c-border); font-weight: bold; }
-        .table-tactical tr { border-bottom: 1px solid rgba(19, 34, 63, 0.4); cursor: pointer; transition: background 0.2s; }
-        .table-tactical tr:hover { background: rgba(0, 242, 254, 0.04) !important; }
-
-        @keyframes alert-pulse {
-            0% { border-color: var(--c-border); } 50% { border-color: var(--c-red); box-shadow: 0 0 10px rgba(255,42,95,0.2); } 100% { border-color: var(--c-border); }
+        .table-tactical { background-color: #0f1526 !important; color: #ffffff !important; }
+        .table-tactical th { color: #00f2fe !important; font-weight: bold; border-bottom: 2px solid #1e293b; }
+        .table-tactical tbody tr { cursor: pointer; transition: background 0.2s; border-bottom: 1px solid #1e293b; }
+        .table-tactical tbody tr:hover { background-color: #1e293b !important; }
+        
+        .code-display {
+            background-color: #02040a !important; color: #39ff14 !important; 
+            font-family: monospace; font-size: 12px; border: 1px solid #1e293b;
+            padding: 10px; width: 100%; border-radius: 4px; resize: none;
         }
-        .pulse-heavy { animation: alert-pulse 1.5s infinite; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #020408; }
-        ::-webkit-scrollbar-thumb { background: #13223f; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--c-cyan); }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-dark bg-black px-4 py-3 border-bottom border-secondary">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <span class="navbar-brand mb-0 h1 font-cyber fw-bold text-glow-cyan fs-3">⚡ CANARY-WEB // STRATEGIC DECEPTION MESH</span>
-            <div class="d-flex gap-3 align-items-center">
-                <span class="badge bg-dark text-glow-cyan border border-info px-3 py-2">DEFENSE STATUS: ACTIVE</span>
-                <span class="text-muted small">NODE: SECURITY_MAIN_HUB</span>
-            </div>
-        </div>
+    <nav class="navbar navbar-dark navbar-cyber px-4 py-3 mb-4">
+        <span class="navbar-brand mb-0 h1 text-neon-cyan fs-3">🛰️ CANARY-WEB // CYBER DECEPTION COMMAND MESH</span>
+        <span class="badge bg-success border border-light">SYSTEM: ACTIVE</span>
     </nav>
 
-    <div class="container-fluid my-4 px-4">
-        
+    <div class="container-fluid px-4">
         <div class="row g-4 mb-4">
-            
-            <div class="col-xl-4 col-lg-6">
-                <div class="panel-tactical p-3 h-100 d-flex flex-column justify-content-between">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-2">
-                            <span class="text-muted small fw-bold">📊 SYSTEM METRICS MESH</span>
-                            <span class="text-success small">● LIVE</span>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="bg-black p-2 border border-secondary text-center">
-                                    <small class="text-muted d-block" style="font-size: 11px;">TOTAL ANOMALIES</small>
-                                    <h2 class="text-glow-cyan font-cyber fw-bold mb-0">{{ total_hits }}</h2>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="bg-black p-2 border border-secondary text-center">
-                                    <small class="text-muted d-block" style="font-size: 11px;">CRITICAL THREATS</small>
-                                    <h2 class="text-glow-red font-cyber fw-bold mb-0">{{ critical_hits }}</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-3">
-                        <span class="text-muted d-block small mb-1">📟 LIVE DECEPTION LOG STREAM (TAIL -F)</span>
-                        <div class="terminal-stream" id="termStream"></div>
-                    </div>
+            <div class="col-md-4">
+                <div class="panel-tactical">
+                    <span class="text-muted small d-block">TOTAL DETECTED ANOMALIES</span>
+                    <div class="metric-value text-neon-cyan">{{ total_hits }}</div>
+                </div>
+                <div class="panel-tactical">
+                    <span class="text-muted small d-block">CRITICAL ATTEMPTS</span>
+                    <div class="metric-value text-neon-red">{{ critical_hits }}</div>
                 </div>
             </div>
 
-            <div class="col-xl-4 col-lg-6">
-                <div class="panel-tactical p-3 text-center d-flex flex-column align-items-center justify-content-center h-100">
-                    <span class="text-muted small fw-bold mb-2">🛰️ TACTICAL RADAR & NODE MESH GRID</span>
-                    <canvas id="radarMesh" width="220" height="220" style="background: #010408; border: 1px solid #101f38; border-radius: 50%;"></canvas>
+            <div class="col-md-4">
+                <div class="panel-tactical text-center d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+                    <span class="text-muted small d-block mb-3">🛰️ TACTICAL RADAR GRID</span>
+                    <canvas id="radarMesh" width="160" height="160"></canvas>
                 </div>
             </div>
 
-            <div class="col-xl-4 col-12">
-                <div class="panel-tactical p-3 h-100 d-flex flex-column justify-content-between">
-                    <div>
-                        <span class="text-glow-cyan font-cyber fw-bold d-block border-bottom border-secondary pb-2 mb-3">🛠️ AUTOMATED INTEGRATED RESPONDER</span>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="pfSenseSync" checked>
-                                <label class="form-check-label ms-2 text-white" for="pfSenseSync">pfSense Automated Block API Route Sync</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="payloadFaker" checked>
-                                <label class="form-check-label ms-2 text-white" for="payloadFaker">Dynamic Honey-Payload Poisoning</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="audioAlarm" checked>
-                                <label class="form-check-label ms-2 text-white" for="audioAlarm">Acoustic Audio Alarm Siren Module</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-black p-2 border border-secondary mt-3 font-cyber text-center text-success" style="font-size: 11px;">
-                        [STATE: ENFORCING AUTOMATED INCIDENT DEFENSE MESH]
-                    </div>
+            <div class="col-md-4">
+                <div class="panel-tactical d-flex flex-column justify-content-between" style="height: 100%;">
+                    <span class="text-muted small d-block mb-2">📟 LIVE SYSTEM LOG STREAM</span>
+                    <div class="terminal-stream" id="termStream"></div>
                 </div>
             </div>
-
         </div>
 
         <div class="row g-4">
-            <div class="col-xl-8 col-12">
-                <div class="panel-tactical p-4 h-100 {% if critical_hits > 0 %}pulse-heavy{% endif %}">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom border-secondary pb-3 mb-3">
-                        <h4 class="font-cyber text-glow-cyan mb-0">🧬 FORENSIC ARTIFACT RECORDING MESH</h4>
-                        <input type="text" id="meshSearch" class="form-control bg-dark text-white border-secondary mt-2 mt-md-0" style="max-width: 350px; font-size: 13px;" placeholder="[SEARCH] IP, Token veya Metatag süzün...">
-                    </div>
-
-                    <div class="table-responsive" style="max-height: 380px;">
-                        <table class="table table-dark table-hover table-tactical mb-0" style="--bs-table-bg: transparent;">
+            <div class="col-lg-8">
+                <div class="panel-tactical">
+                    <h4 class="text-neon-cyan mb-3">🧬 FORENSIC ARTIFACT PIPELINE</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-tactical align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>ZAMAN (UTC)</th>
                                     <th>AĞ KATMANI (IP)</th>
-                                    <th>TEHDİT</th>
-                                    <th>EKRAN</th>
-                                    <th>TARAYICI / SİSTEM ALTI DETAYI</th>
+                                    <th>TEHDİT SEVİYESİ</th>
+                                    <th>EKRAN BOYUTU</th>
                                 </tr>
                             </thead>
                             <tbody id="logMeshBody">
                                 {% if not hits %}
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">[SİSTEM TEMİZ] Bal küpü sensörleri izole ağ üzerinde dinlemede...</td>
+                                    <td colspan="4" class="text-center py-4 text-muted">[SİSTEM TEMİZ] Sensörler aktif...</td>
                                 </tr>
                                 {% endif %}
                                 {% for hit in hits %}
-                                <tr onclick="selectAttacker('{{ hit.ip_address }}', '{{ hit.generated_rules.iptables }}', '{{ hit.generated_rules.snort }}', '{{ hit.generated_rules.pfsense_api }}')">
-                                    <td><small class="font-cyber text-info">{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
+                                <tr class="attacker-row" 
+                                    data-iptables="{{ hit.generated_rules.iptables }}" 
+                                    data-snort="{{ hit.generated_rules.snort }}" 
+                                    data-pfsense="{{ hit.generated_rules.pfsense_api }}">
+                                    <td><small>{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
                                     <td><strong>{{ hit.ip_address }}</strong></td>
                                     <td>
                                         {% if hit.threat_level.value == 'Critical' %}
-                                        <span class="badge bg-danger text-white px-2">CRITICAL</span>
+                                        <span class="badge bg-danger">CRITICAL</span>
                                         {% else %}
-                                        <span class="badge bg-warning text-black px-2">HIGH</span>
+                                        <span class="badge bg-warning text-dark">HIGH</span>
                                         {% endif %}
                                     </td>
-                                    <td><small>{{ hit.screen_resolution or 'CLI Engine' }}</small></td>
-                                    <td><small class="text-muted">{{ hit.notes or hit.user_agent[:45] }}...</small></td>
+                                    <td><small>{{ hit.screen_resolution or 'CLI Tool' }}</small></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -185,114 +124,72 @@
                 </div>
             </div>
 
-            <div class="col-xl-4 col-12">
-                <div class="panel-tactical p-4 h-100">
-                    <span class="font-cyber text-glow-cyan fw-bold d-block border-bottom border-secondary pb-2 mb-3">🔥 AUTOMATED IPS MITIGATION GENERATOR</span>
-                    <p class="text-muted small">Soldaki adli bilişim tablosundan herhangi bir satıra tıkladığınızda, o saldırganın IP adresini tüm kurumsal ağ geçitlerinden (Firewall) kazıyacak otomatize siber savunma betikleri burada üretilir.</p>
-                    
-                    <div class="mb-2">
-                        <label class="text-warning small d-block mb-1">Linux Netfilter (IPTables) Block Rule:</label>
-                        <textarea id="ipTablesZone" class="form-control bg-black text-success border-secondary font-monospace" rows="2" style="font-size: 11px; color: #39ff14 !important;" readonly>[Seçim bekleniyor...]</textarea>
+            <div class="col-lg-4">
+                <div class="panel-tactical">
+                    <h5 class="text-neon-cyan mb-3">🔥 AUTOMATED IPS RESPONDER</h5>
+                    <div class="mb-3">
+                        <label class="text-warning small d-block mb-1">Linux IPTables Rule:</label>
+                        <textarea id="ipTablesZone" class="code-display" rows="2" readonly>[Satır seçimi bekleniyor...]</textarea>
                     </div>
-                    <div class="mb-2">
-                        <label class="text-warning small d-block mb-1">Snort IDS/IPS Drop Signature:</label>
-                        <textarea id="snortZone" class="form-control bg-black text-success border-secondary font-monospace" rows="2" style="font-size: 11px; color: #39ff14 !important;" readonly>[Seçim bekleniyor...]</textarea>
+                    <div class="mb-3">
+                        <label class="text-warning small d-block mb-1">Snort IDS/IPS Signature:</label>
+                        <textarea id="snortZone" class="code-display" rows="2" readonly>[Satır seçimi bekleniyor...]</textarea>
                     </div>
                     <div>
-                        <label class="text-warning small d-block mb-1">pfSense API Call Integration Payload:</label>
-                        <textarea id="pfZone" class="form-control bg-black text-success border-secondary font-monospace" rows="1" style="font-size: 11px; color: #39ff14 !important;" readonly>[Seçim bekleniyor...]</textarea>
+                        <label class="text-warning small d-block mb-1">pfSense API Call Payload:</label>
+                        <textarea id="pfZone" class="code-display" rows="2" readonly>[Satır seçimi bekleniyor...]</textarea>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <audio id="sirenAudio" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
-
     <script>
-        // 1. ANLIK LOKAL ARMA VE FILTRELEME MOTORU
-        document.getElementById('meshSearch').addEventListener('keyup', function() {
-            let val = this.value.toLowerCase();
-            document.querySelectorAll('#logMeshBody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+        // TIKLAMA HATASINI ÇÖZEN YENİ NESİL EVENT LISTENER
+        document.querySelectorAll('.attacker-row').forEach(row => {
+            row.addEventListener('click', function() {
+                document.getElementById('ipTablesZone').value = this.dataset.iptables;
+                document.getElementById('snortZone').value = this.dataset.snort;
+                document.getElementById('pfZone').value = this.dataset.pfsense;
             });
         });
 
-        // 2. INTERAKTİF FIREWALL ENGELLEME KODU YAZDIRICI
-        function selectAttacker(ip, iptables, snort, pfsense) {
-            document.getElementById('ipTablesZone').value = iptables;
-            document.getElementById('snortZone').value = snort;
-            document.getElementById('pfZone').value = pfsense;
-        }
-
-        // 3. ARKA PLAN CANLI TERMİNAL AKIŞ SİMÜLASYONU
+        // Canlı Terminal Akışı Simülasyonu
+        const termBox = document.getElementById('termStream');
         const sysLogs = [
-            "INFO [CORE] Initializing secure telemetry listener mesh...",
-            "SUCCESS [DB] SQlite core connector validated. Integrity check: OK",
-            "INFO [IPS] Auto-Mitigation engine hooked to netfilter pipeline.",
-            "AUDIT [SYSTEM] Active Honeytoken deployment matrix listening on 0.0.0.0:5000",
-            "INFO [COMPLIANCE] OWASP Top 10 API route protection verified.",
-            "SUCCESS [MESH] In-memory Datacenter IP CIDR lookup block loaded."
+            "INFO Core telemetry listener initialized.",
+            "SUCCESS SQLite connector validated: OK",
+            "INFO IPS pipeline hooked to netfilter.",
+            "READY Canary tokens armed and listening..."
         ];
-        
-        let termBox = document.getElementById('termStream');
-        sysLogs.forEach((log, index) => {
+        sysLogs.forEach((log, idx) => {
             setTimeout(() => {
-                termBox.innerHTML += `<div><span style='color:#39ff14'>[${new Date().toISOString().slice(11,19)}]</span> ${log}</div>`;
+                termBox.innerHTML += `<div>[${new Date().toISOString().slice(11,19)}] ${log}</div>`;
                 termBox.scrollTop = termBox.scrollHeight;
-            }, index * 800);
+            }, idx * 500);
         });
 
-        // Eğer yeni bir alarm varsa terminal akışına kırmızı siber olay uyarısını fırlat
-        if(parseInt("{{ total_hits or 0 }}") > 0) {
-            setTimeout(() => {
-                termBox.innerHTML += `<div style='color:#ff2a5f; font-weight:bold;'><span style='color:#ff2a5f'>[ALERT]</span> CRITICAL DECEPTION TUZAĞI TETİKLENDİ! Forensic artifacts captured.</div>`;
-                termBox.scrollTop = termBox.scrollHeight;
-            }, 5000);
-        }
-
-        // 4. GELİŞMİŞ TAKTİKSEL RADAR ÇİZİMİ
+        // Radar Çizim Motoru
         const canvas = document.getElementById('radarMesh');
         const ctx = canvas.getContext('2d');
         let sweepAngle = 0;
 
-        function drawTacticalRadar() {
+        function drawRadar() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let cx = canvas.width / 2; let cy = canvas.height / 2; let r = canvas.width / 2 - 5;
-
-            // Grid Çizgileri
-            ctx.strokeStyle = 'rgba(0, 242, 254, 0.15)'; ctx.lineWidth = 1;
-            for(let i = 1; i <= 4; i++) {
-                ctx.beginPath(); ctx.arc(cx, cy, (r / 4) * i, 0, Math.PI * 2); ctx.stroke();
+            let cx = canvas.width / 2; let cy = canvas.height / 2; let r = canvas.width / 2 - 2;
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.3)'; ctx.lineWidth = 1;
+            for(let i=1; i<=3; i++) {
+                ctx.beginPath(); ctx.arc(cx, cy, (r/3)*i, 0, Math.PI*2); ctx.stroke();
             }
-            ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
-
-            // Sweep Tarama Işığı
             ctx.save(); ctx.translate(cx, cy); ctx.rotate(sweepAngle);
-            let grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-            grad.addColorStop(0, 'rgba(0, 242, 254, 0.3)'); grad.addColorStop(1, 'rgba(0, 242, 254, 0)');
-            ctx.fillStyle = grad; ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0, r, 0, Math.PI / 3); ctx.lineTo(0,0); ctx.fill();
+            let grad = ctx.createRadialGradient(0,0,0,0,0,r);
+            grad.addColorStop(0, 'rgba(0, 242, 254, 0.4)'); grad.addColorStop(1, 'rgba(0, 242, 254, 0)');
+            ctx.fillStyle = grad; ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,0,Math.PI/3); ctx.lineTo(0,0); ctx.fill();
             ctx.restore();
-
-            // Saldırgan Noktası (Eğer hit varsa kırmızı çak)
-            if(parseInt("{{ total_hits or 0 }}") > 0) {
-                ctx.fillStyle = `rgba(255, 42, 95, ${Math.abs(Math.sin(Date.now() / 200))})`;
-                ctx.beginPath(); ctx.arc(cx + 45, cy - 55, 7, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#ff2a5f'; ctx.stroke();
-            }
-
-            sweepAngle += 0.02;
-            requestAnimationFrame(drawTacticalRadar);
+            sweepAngle += 0.03;
+            requestAnimationFrame(drawRadar);
         }
-        drawTacticalRadar();
-
-        // 5. SES MOTORU TETİKLEYİCİSİ
-        window.addEventListener('DOMContentLoaded', () => {
-            if(parseInt("{{ total_hits or 0 }}") > 0 && document.getElementById('audioAlarm').checked) {
-                document.getElementById('sirenAudio').play().catch(() => {});
-            }
-        });
+        drawRadar();
     </script>
 </body>
 </html>
