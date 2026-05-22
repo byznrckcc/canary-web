@@ -3,14 +3,14 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 import uuid
+from datetime import datetime, timezone
 from flask import Flask, request, jsonify, render_template_string, render_template
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from canary_web.models.forensics import Base, CanaryHit, ThreatLevel
 
-# ── 1. MERKEZİ YAPILANDIRMA (CONFIGURATION) ─────────────────────────────────
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "canary_web_secure_fallback_key_2026")
+    SECRET_KEY = os.environ.get("SECRET_KEY", "cyber_command_ultra_secret_2026")
     DATABASE_URI = "sqlite:///canary_dev.db"
     DEBUG = True
     PORT = 5000
@@ -19,69 +19,41 @@ class Config:
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# ── 2. ENDÜSTRİYEL LOGLAMA ALTYAPISI (LOGGING) ──────────────────────────────
-log_handler = RotatingFileHandler('canary_system.log', maxBytes=1000000, backupCount=3)
-log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+# Endüstriyel Günlükleme
+log_handler = RotatingFileHandler('canary_system.log', maxBytes=2000000, backupCount=5)
+log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] [%(subsystem)s] %(message)s')
 log_handler.setFormatter(log_formatter)
-logger = logging.getLogger("CanaryWebLogger")
+logger = logging.getLogger("CanaryTactical")
 logger.setLevel(logging.INFO)
 logger.addHandler(log_handler)
 
-# Veritabanı Bağlantısı
 engine = create_engine(app.config["DATABASE_URI"], echo=False)
 SessionLocal = sessionmaker(bind=engine)
 
-# Standart 1x1 Şeffaf GIF (Web Beacon)
-TRANSPARENT_GIF = base64.b64decode(b"R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
+# ── AKTİF DUVAR KURALI ÜRETİCİSİ (FIREWALL RULE GENERATOR ENGINE) ──────────
+def generate_firewall_rules(ip_address):
+    """Saldırgan yakalandığı an jüriye gösterilecek canlı engelleme betikleri."""
+    return {
+        "iptables": f"sudo iptables -A INPUT -s {ip_address} -j DROP -m comment --comment 'CANARY-WEB EXPLOIT TRAP'",
+        "snort": f"drop tcp {ip_address} any -> $WM_NET any (msg:'CANARY-WEB INTENTIONAL TRAP HIT'; sid:9900001; rev:1;)",
+        "pfsense_api": f"curl -X POST https://pfsense.local/api/v1/firewall/block -d 'ip={ip_address}&reason=canary_hit'"
+    }
 
-# Sahte Hata Sayfası Şablonu
-FAKED_ERROR_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <title>503 Service Unavailable</title>
-    <style>
-        body { background-color: #f1f1f1; color: #555; font-family: sans-serif; text-align: center; padding-top: 150px; }
-        h1 { font-size: 40px; color: #333; }
-        p { font-size: 18px; }
-        .code { color: #999; font-family: monospace; }
-    </style>
-</head>
-<body>
-    <h1>Sunucu Geçici Olarak Hizmet Dışı</h1>
-    <p>İstenen kaynak üzerinde planlı bakım çalışması yapılmaktadır. Lütfen daha sonra tekrar deneyiniz.</p>
-    <p class="code">Error Code: HTTP 503 Service Unavailable (ID: {{ event_id }})</p>
-</body>
-</html>
-"""
-
-# ── 3. GÜVENLİK BAŞLIKLARI MIDDLEWARE (SECURE HEADERS) ───────────────────────
+# ── GLOBAL MİDDLEWARE VE HATA YAKALAYICILAR ─────────────────────────────────
 @app.after_request
 def inject_security_headers(response):
-    """
-    Güvenli Web Geliştirme standartlarına uygun olarak, her HTTP yanıtına
-    OWASP tarafından önerilen kritik güvenlik başlıklarını enjekte eder.
-    """
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Content-Security-Policy"] = "default-src 'self' https://cdn.jsdelivr.net;"
-    response.headers["Server"] = "Secure-Audit-Server"  # Banner Grabbing saldırılarını yanıltmak için
+    response.headers["Server"] = "Tactical-Defense-Mesh"
     return response
 
-# ── 4. MERKEZİ HATA YÖNETİMİ (GLOBAL EXCEPTION HANDLING) ────────────────────
-@app.errorhandler(404)
-def page_not_found(e):
-    logger.warning(f"404 Not Found tetiklendi: {request.path} - IP: {request.remote_addr}")
-    return jsonify({"error": "Resource not found", "status": 404}), 404
+@app.app_context_processor
+def inject_now():
+    return {'now': datetime.now(timezone.utc)}
 
-@app.errorhandler(500)
-def internal_server_error(e):
-    logger.error(f"500 Internal Server Error: {str(e)}")
-    return jsonify({"error": "Internal server configuration anomaly", "status": 500}), 500
-
-# ── 5. UYGULAMA ROTASI: ADMIN DASHBOARD ─────────────────────────────────────
+# ── ROUTE 1: SİBER KOMUTA MERKEZİ (DASHBOARD) ───────────────────────────────
 @app.route("/dashboard", methods=["GET"])
 def dashboard_view():
     db = SessionLocal()
@@ -91,30 +63,60 @@ def dashboard_view():
         critical_hits = db.query(CanaryHit).filter(CanaryHit.threat_level == ThreatLevel.CRITICAL).count()
         unique_tokens = db.query(func.count(CanaryHit.token_id.distinct())).scalar() or 0
         
+        # Her log girişi için dinamik firewall kurallarını oluşturup nesneye enjekte ediyoruz
+        for hit in all_hits:
+            hit.generated_rules = generate_firewall_rules(hit.ip_address or "127.0.0.1")
+            
         return render_template(
             "dashboard.html", 
             hits=all_hits, total_hits=total_hits, 
             critical_hits=critical_hits, unique_tokens=unique_tokens
         )
     except Exception as e:
-        logger.error(f"Dashboard yüklenirken kritik DB hatası: {str(e)}")
-        return "System Integrity Error", 500
+        return f"Database Integrity Anomaly: {str(e)}", 500
     finally:
         db.close()
 
-# ── 6. UYGULAMA ROTASI: TOKEN ÜRETİCİ (GENERATOR) ────────────────────────────
+# ── ROUTE 2: BAL KÜPÜ LİNK ÜRETİCİ (API) ────────────────────────────────────
 @app.route("/api/v1/tokens/generate", methods=["POST"])
 def generate_token():
     generated_uuid = str(uuid.uuid4())
-    logger.info(f"Yeni Canary Token üretildi: {generated_uuid} - Kaynak IP: {request.remote_addr}")
     return jsonify({
-        "status": "success",
+        "status": "Aktivasyon Başarılı",
         "token_id": generated_uuid,
-        "trigger_url": f"{request.url_root}t/{generated_uuid}",
-        "msg": "Canary token başarıyla oluşturuldu ve şifrelendi."
+        "deception_matrix": {
+            "web_beacon_url": f"{request.url_root}t/{generated_uuid}",
+            "wordpress_trap_url": f"{request.url_root}wp-admin/auth/{generated_uuid}",
+            "cloud_vault_url": f"{request.url_root}api/v2/vault/credentials/{generated_uuid}"
+        }
     }), 201
 
-# ── 7. UYGULAMA ROTASI: BAL KÜPÜ GİRİŞ NOKTASI (TRIGGER) ─────────────────────
+# ── ROUTE 3: GENİŞLETİLMİŞ MODÜL - WORDPRESS GİRİŞ TUZAĞI (`/wp-admin`) ────
+@app.route("/wp-admin/auth/<uuid_id>", methods=["GET", "POST"])
+def wordpress_trap(uuid_id):
+    """Saldırganların en çok taradığı dizin olan wp-admin için özel aldatmaca rotası."""
+    db = SessionLocal()
+    try:
+        hit = CanaryHit(
+            token_id=f"wp_trap_{uuid_id[:8]}", ip_address=request.remote_addr,
+            user_agent=request.headers.get("User-Agent"), referer=request.headers.get("Referer"),
+            http_method=request.method, threat_level=ThreatLevel.HIGH,
+            notes="Saldırgan sahte WordPress admin paneline kaba kuvvet (Brute Force) denemesi yaptı."
+        )
+        hit.populate_datacenter_flag()
+        if hit.is_vpn_or_tor: hit.threat_level = ThreatLevel.CRITICAL
+        hit.set_fingerprint()
+        db.add(hit)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+    finally:
+        db.close()
+    
+    # Gerçekçi bir wordpress sahte hata ekranı dönüyoruz
+    return "<strong>Fatal error:</strong> Call to undefined function wp_signon() in /var/www/html/wp-includes/user.php on line 43", 500
+
+# ── ROUTE 4: STANDART BAL KÜPÜ GİRİŞ NOKTASI (WEB BEACON TRAP) ──────────────
 @app.route("/t/<uuid_id>", methods=["GET"])
 def trigger_point(uuid_id):
     telemetry_js_template = """
@@ -141,42 +143,38 @@ def trigger_point(uuid_id):
             };
         </script>
     </head>
-    <body style="background-color: #ffffff;"></body>
+    <body style="background-color: #03070c;"></body>
     </html>
     """
     user_agent = request.headers.get("User-Agent", "").lower()
-    
-    # CLI / Bot taraması algılama mekanizması
-    if any(bot in user_agent for bot in ["curl", "wget", "python", "nikto", "nmap", "sqlmap"]):
-        logger.warning(f"Otomatize tarama aracı tespit edildi! Araç: {user_agent} - IP: {request.remote_addr}")
+    if any(bot in user_agent for bot in ["curl", "wget", "python", "nikto", "nmap", "sqlmap", "dirb"]):
         db = SessionLocal()
         try:
             hit = CanaryHit(
                 token_id=uuid_id, ip_address=request.remote_addr,
-                user_agent=request.headers.get("User-Agent"),
-                referer=request.headers.get("Referer"), http_method=request.method,
-                threat_level=ThreatLevel.HIGH, notes=f"CLI/Bot Taraması Bloklandı: {user_agent}"
+                user_agent=request.headers.get("User-Agent"), referer=request.headers.get("Referer"),
+                http_method=request.method, threat_level=ThreatLevel.HIGH,
+                notes=f"Otomatize Siber Keşif Aracı Engellendi: {user_agent}"
             )
             hit.populate_datacenter_flag()
             if hit.is_vpn_or_tor: hit.threat_level = ThreatLevel.CRITICAL
             hit.set_fingerprint()
             db.add(hit)
             db.commit()
-        except Exception as e:
+        except Exception:
             db.rollback()
-            logger.error(f"CLI loglama hatası: {str(e)}")
         finally:
             db.close()
-        return jsonify({"error": "Internal Server Error"}), 500
+        return jsonify({"status": "Access Denied", "code": "SIG_RECON_DETECTED"}), 403
 
     return render_template_string(telemetry_js_template, token_id=uuid_id)
 
-# ── 8. UYGULAMA ROTASI: ADLİ VERİ ANALİZ PIPELINE (CAPTURE) ──────────────────
+# ── ROUTE 5: TELEMETRİ ALICI PIPELINE ───────────────────────────────────────
 @app.route("/api/v1/telemetry/capture", methods=["POST"])
 def telemetry_capture():
     data = request.get_json() or {}
     token_id = data.get("token_id")
-    if not token_id: return jsonify({"status": "error", "message": "Missing Payload"}), 400
+    if not token_id: return jsonify({"status": "malformed_payload"}), 400
     
     db = SessionLocal()
     try:
@@ -190,29 +188,22 @@ def telemetry_capture():
             system_languages=data.get("system_languages"), threat_level=ThreatLevel.HIGH
         )
         hit.populate_datacenter_flag()
-        if hit.is_vpn_or_tor: 
-            hit.threat_level = ThreatLevel.CRITICAL
-            logger.critical(f"KRİTİK TEHDİT: Veri Merkezi veya VPN üzerinden erişim! IP: {ip_addr}")
-        
+        if hit.is_vpn_or_tor: hit.threat_level = ThreatLevel.CRITICAL
         hit.set_fingerprint(extra=data.get("screen_resolution", ""))
         db.add(hit)
         db.commit()
-        logger.info(f"Adli bilişim kanıtı başarıyla kaydedildi. Token: {token_id} - IP: {ip_addr}")
-        return jsonify({"status": "processed"}), 200
-    except Exception as e:
+        return jsonify({"status": "telemetry_logged"}), 200
+    except Exception:
         db.rollback()
-        logger.error(f"Telemetri capture hatası: {str(e)}")
-        return jsonify({"status": "db_error"}), 500
+        return jsonify({"status": "pipeline_error"}), 500
     finally:
         db.close()
 
 @app.route("/error-page")
 def error_page():
-    event_id = request.args.get("event", "UNKNOWN")
-    return render_template_string(FAKED_ERROR_TEMPLATE, event_id=event_id), 503
+    return "<h1>404 Not Found</h1>The requested URL was not found on this server.", 404
 
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
-    logger.info("Canary-Web Enterprise Backend Core Engine successfully initialized.")
-    print("[+] Kurumsal Seviye Flask Motoru ve Güvenlik Altyapısı Hazır.")
+    print("[+] Taktiksel Siber Savunma Altyapısı Devreye Alındı.")
     app.run(host=app.config["HOST"], port=app.config["PORT"], debug=app.config["DEBUG"])

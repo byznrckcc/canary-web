@@ -3,281 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canary-Web // Tactical Cyber Command Center</title>
+    <title>Canary-Web // Strategic Cyber Command Mesh</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
         :root {
-            --cyber-bg: #03070c;
-            --cyber-panel: rgba(10, 20, 38, 0.7);
-            --cyber-cyan: #00f2fe;
-            --cyber-red: #ff2a5f;
-            --cyber-green: #05ff9b;
-            --cyber-orange: #ffaa00;
-            --cyber-border: rgba(0, 242, 254, 0.2);
+            --c-bg: #020408;
+            --c-panel: rgba(6, 11, 25, 0.85);
+            --c-cyan: #00f2fe;
+            --c-red: #ff2a5f;
+            --c-green: #39ff14;
+            --c-orange: #ff9f43;
+            --c-border: #13223f;
         }
 
         body { 
-            background-color: var(--cyber-bg); 
-            color: #e2e8f0; 
-            font-family: 'Share Tech Mono', monospace;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 6px 100%;
+            background-color: var(--c-bg); color: #abb2bf; font-family: 'Share Tech Mono', monospace;
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(0, 242, 254, 0.02), rgba(255, 42, 95, 0.01), rgba(0, 0, 0, 0.02));
+            background-size: 100% 4px, 6px 100%; overflow-x: hidden;
         }
 
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        
-        .panel-cyber {
-            background: var(--cyber-panel);
-            border: 1px solid var(--cyber-border);
-            border-radius: 4px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.05), 0 5px 15px rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-        }
-        
-        .panel-cyber::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--cyber-cyan);
-        }
-        
-        .panel-critical::before { background: var(--cyber-red); }
-        .panel-success::before { background: var(--cyber-green); }
+        .font-cyber { font-family: 'Orbitron', sans-serif; }
+        .text-glow-cyan { color: var(--c-cyan); text-shadow: 0 0 10px rgba(0, 242, 254, 0.6); }
+        .text-glow-red { color: var(--c-red); text-shadow: 0 0 10px rgba(255, 42, 95, 0.6); }
 
-        .text-neon-cyan { color: var(--cyber-cyan); text-shadow: 0 0 10px rgba(0, 242, 254, 0.6); }
-        .text-neon-red { color: var(--cyber-red); text-shadow: 0 0 10px rgba(ff, 2a, 5f, 0.6); }
-        
-        /* Tehdit Yanıp Sönme Efektleri */
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
+        .panel-tactical {
+            background: var(--c-panel); border: 1px solid var(--c-border); border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.7), inset 0 0 15px rgba(0, 242, 254, 0.03);
+            backdrop-filter: blur(4px); position: relative;
         }
-        .scanline-effect {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(0,242,254,0), rgba(0,242,254,0.05) 10%, rgba(0,242,254,0) 20%);
-            animation: scanline 6s linear infinite; pointer-events: none;
+        .panel-tactical::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 6px; background: var(--c-cyan);
         }
 
-        .badge-cyber {
-            border: 1px solid currentColor; background: transparent; padding: 5px 10px; font-weight: bold;
-        }
-        
-        /* Switch Tasarımları */
-        .form-check-input {
-            background-color: #0d1b2a; border-color: var(--cyber-border);
-        }
-        .form-check-input:checked {
-            background-color: var(--cyber-cyan); border-color: var(--cyber-cyan);
-            box-shadow: 0 0 10px var(--cyber-cyan);
+        /* Canlı Terminal Simülasyonu */
+        .terminal-stream {
+            height: 160px; overflow-y: auto; background: #010204; border: 1px solid #101c33;
+            font-size: 11px; color: #51afef; padding: 8px; font-family: monospace;
         }
 
-        .search-cyber {
-            background: rgba(0, 0, 0, 0.5); border: 1px solid var(--cyber-border); color: #fff; font-family: monospace;
+        .table-tactical { color: #cbd5e1; font-size: 13px; }
+        .table-tactical th { color: var(--c-cyan); border-bottom: 2px solid var(--c-border); font-weight: bold; }
+        .table-tactical tr { border-bottom: 1px solid rgba(19, 34, 63, 0.4); cursor: pointer; transition: background 0.2s; }
+        .table-tactical tr:hover { background: rgba(0, 242, 254, 0.04) !important; }
+
+        @keyframes alert-pulse {
+            0% { border-color: var(--c-border); } 50% { border-color: var(--c-red); box-shadow: 0 0 10px rgba(255,42,95,0.2); } 100% { border-color: var(--c-border); }
         }
-        .search-cyber:focus {
-            background: rgba(0, 0, 0, 0.7); border-color: var(--cyber-cyan); color: #fff; box-shadow: 0 0 10px var(--cyber-cyan);
-        }
+        .pulse-heavy { animation: alert-pulse 1.5s infinite; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #020408; }
+        ::-webkit-scrollbar-thumb { background: #13223f; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--c-cyan); }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-dark bg-dark border-bottom border-secondary px-4 py-3">
-        <span class="navbar-brand mb-0 h1 font-orbitron text-neon-cyan fw-bold">🛰️ CANARY-WEB // TACTICAL COMM CENTER</span>
-        <div class="d-flex align-items-center">
-            <span class="badge badge-cyber text-success me-3">● COUNTER-MEASURES: MONITORING</span>
-            <span class="font-orbitron text-muted small">SYS_LOC: KALI_VIRTUAL</span>
+    <nav class="navbar navbar-dark bg-black px-4 py-3 border-bottom border-secondary">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <span class="navbar-brand mb-0 h1 font-cyber fw-bold text-glow-cyan fs-3">⚡ CANARY-WEB // STRATEGIC DECEPTION MESH</span>
+            <div class="d-flex gap-3 align-items-center">
+                <span class="badge bg-dark text-glow-cyan border border-info px-3 py-2">DEFENSE STATUS: ACTIVE</span>
+                <span class="text-muted small">NODE: SECURITY_MAIN_HUB</span>
+            </div>
         </div>
     </nav>
 
     <div class="container-fluid my-4 px-4">
         
         <div class="row g-4 mb-4">
-            <div class="col-xl-4 col-md-6">
-                <div class="d-flex flex-column gap-3 h-100">
-                    <div class="panel-cyber p-3 flex-grow-1">
-                        <small class="text-muted">TOTAL DETECTED ANOMALIES</small>
-                        <h1 class="display-4 font-orbitron text-neon-cyan fw-900 mt-1">{{ total_hits }}</h1>
-                        <div class="progress bg-dark mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-info" style="width: {{ total_hits * 10 if total_hits < 10 else 100 }}%"></div>
+            
+            <div class="col-xl-4 col-lg-6">
+                <div class="panel-tactical p-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-2">
+                            <span class="text-muted small fw-bold">📊 SYSTEM METRICS MESH</span>
+                            <span class="text-success small">● LIVE</span>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="bg-black p-2 border border-secondary text-center">
+                                    <small class="text-muted d-block" style="font-size: 11px;">TOTAL ANOMALIES</small>
+                                    <h2 class="text-glow-cyan font-cyber fw-bold mb-0">{{ total_hits }}</h2>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-black p-2 border border-secondary text-center">
+                                    <small class="text-muted d-block" style="font-size: 11px;">CRITICAL THREATS</small>
+                                    <h2 class="text-glow-red font-cyber fw-bold mb-0">{{ critical_hits }}</h2>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="panel-cyber panel-critical p-3 flex-grow-1">
-                        <small class="text-muted">CRITICAL EXPLOIT ATTEMPTS</small>
-                        <h1 class="display-4 font-orbitron text-neon-red fw-900 mt-1">{{ critical_hits }}</h1>
-                        <div class="progress bg-dark mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-danger" style="width: {{ critical_hits * 20 if critical_hits < 5 else 100 }}%"></div>
-                        </div>
+                    
+                    <div class="mt-3">
+                        <span class="text-muted d-block small mb-1">📟 LIVE DECEPTION LOG STREAM (TAIL -F)</span>
+                        <div class="terminal-stream" id="termStream"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-4 col-md-6">
-                <div class="panel-cyber p-3 text-center d-flex flex-column align-items-center justify-content-center h-100">
-                    <small class="text-muted text-uppercase mb-2">🔴 DİNAMİK TEHDİT MATRİS RADARI</small>
-                    <canvas id="radarCanvas" width="220" height="220" style="background: transparent;"></canvas>
+            <div class="col-xl-4 col-lg-6">
+                <div class="panel-tactical p-3 text-center d-flex flex-column align-items-center justify-content-center h-100">
+                    <span class="text-muted small fw-bold mb-2">🛰️ TACTICAL RADAR & NODE MESH GRID</span>
+                    <canvas id="radarMesh" width="220" height="220" style="background: #010408; border: 1px solid #101f38; border-radius: 50%;"></canvas>
                 </div>
             </div>
 
             <div class="col-xl-4 col-12">
-                <div class="panel-cyber panel-success p-3 h-100">
-                    <small class="text-neon-cyan fw-bold">🛠️ AKTİF OLAY MÜDAHALE KONSOLU (IPS)</small>
-                    <div class="d-flex flex-column gap-3 mt-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="fwBlock" checked>
-                            <label class="form-check-label ms-2" for="fwBlock">pfSense API / Saldırgan IP'yi Otomatik Engelle</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="honeyInject">
-                            <label class="form-check-label ms-2" for="honeyInject">Deception Modu / Sahte Veri Enjekte Et (Honey-Payload)</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="audioToggle" checked>
-                            <label class="form-check-label ms-2" for="audioToggle">Sesli Alarm Motoru (Siren Alert Engine)</label>
+                <div class="panel-tactical p-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="text-glow-cyan font-cyber fw-bold d-block border-bottom border-secondary pb-2 mb-3">🛠️ AUTOMATED INTEGRATED RESPONDER</span>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="pfSenseSync" checked>
+                                <label class="form-check-label ms-2 text-white" for="pfSenseSync">pfSense Automated Block API Route Sync</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="payloadFaker" checked>
+                                <label class="form-check-label ms-2 text-white" for="payloadFaker">Dynamic Honey-Payload Poisoning</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="audioAlarm" checked>
+                                <label class="form-check-label ms-2 text-white" for="audioAlarm">Acoustic Audio Alarm Siren Module</label>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-3 p-2 bg-black rounded" style="font-size: 11px; font-family: monospace; border: 1px solid #1a2238;">
-                        <span class="text-success">[OK]</span> IPS pipeline initialized.<br>
-                        <span class="text-warning">[WARN]</span> Honeypot tokens awaiting remote triggers.
+                    <div class="bg-black p-2 border border-secondary mt-3 font-cyber text-center text-success" style="font-size: 11px;">
+                        [STATE: ENFORCING AUTOMATED INCIDENT DEFENSE MESH]
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-8 col-12">
+                <div class="panel-tactical p-4 h-100 {% if critical_hits > 0 %}pulse-heavy{% endif %}">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom border-secondary pb-3 mb-3">
+                        <h4 class="font-cyber text-glow-cyan mb-0">🧬 FORENSIC ARTIFACT RECORDING MESH</h4>
+                        <input type="text" id="meshSearch" class="form-control bg-dark text-white border-secondary mt-2 mt-md-0" style="max-width: 350px; font-size: 13px;" placeholder="[SEARCH] IP, Token veya Metatag süzün...">
+                    </div>
+
+                    <div class="table-responsive" style="max-height: 380px;">
+                        <table class="table table-dark table-hover table-tactical mb-0" style="--bs-table-bg: transparent;">
+                            <thead>
+                                <tr>
+                                    <th>ZAMAN (UTC)</th>
+                                    <th>AĞ KATMANI (IP)</th>
+                                    <th>TEHDİT</th>
+                                    <th>EKRAN</th>
+                                    <th>TARAYICI / SİSTEM ALTI DETAYI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logMeshBody">
+                                {% if not hits %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">[SİSTEM TEMİZ] Bal küpü sensörleri izole ağ üzerinde dinlemede...</td>
+                                </tr>
+                                {% endif %}
+                                {% for hit in hits %}
+                                <tr onclick="selectAttacker('{{ hit.ip_address }}', '{{ hit.generated_rules.iptables }}', '{{ hit.generated_rules.snort }}', '{{ hit.generated_rules.pfsense_api }}')">
+                                    <td><small class="font-cyber text-info">{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
+                                    <td><strong>{{ hit.ip_address }}</strong></td>
+                                    <td>
+                                        {% if hit.threat_level.value == 'Critical' %}
+                                        <span class="badge bg-danger text-white px-2">CRITICAL</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-black px-2">HIGH</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ hit.screen_resolution or 'CLI Engine' }}</small></td>
+                                    <td><small class="text-muted">{{ hit.notes or hit.user_agent[:45] }}...</small></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-12">
+                <div class="panel-tactical p-4 h-100">
+                    <span class="font-cyber text-glow-cyan fw-bold d-block border-bottom border-secondary pb-2 mb-3">🔥 AUTOMATED IPS MITIGATION GENERATOR</span>
+                    <p class="text-muted small">Soldaki adli bilişim tablosundan herhangi bir satıra tıkladığınızda, o saldırganın IP adresini tüm kurumsal ağ geçitlerinden (Firewall) kazıyacak otomatize siber savunma betikleri burada üretilir.</p>
+                    
+                    <div class="mb-2">
+                        <label class="text-warning small d-block mb-1">Linux Netfilter (IPTables) Block Rule:</label>
+                        <textarea id="ipTablesZone" class="form-control bg-black text-success border-secondary font-monospace" rows="2" style="font-size: 11px; color: #39ff14 !important;" readonly>[Seçim bekleniyor...]</textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="text-warning small d-block mb-1">Snort IDS/IPS Drop Signature:</label>
+                        <textarea id="snortZone" class="form-control bg-black text-success border-secondary font-monospace" rows="2" style="font-size: 11px; color: #39ff14 !important;" readonly>[Seçim bekleniyor...]</textarea>
+                    </div>
+                    <div>
+                        <label class="text-warning small d-block mb-1">pfSense API Call Integration Payload:</label>
+                        <textarea id="pfZone" class="form-control bg-black text-success border-secondary font-monospace" rows="1" style="font-size: 11px; color: #39ff14 !important;" readonly>[Seçim bekleniyor...]</textarea>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="panel-cyber p-4">
-            <div class="scanline-effect"></div>
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-6">
-                    <h4 class="font-orbitron text-neon-cyan mb-0">🧬 REAL-TIME FORENSICS ARTIFACT PIPELINE</h4>
-                </div>
-                <div class="col-md-6 mt-2 mt-md-0">
-                    <input type="text" id="tableSearch" class="form-control search-cyber" placeholder="[SYS_LOG] Filtrelemek istediğiniz IP, Token veya Cihaz parametresini giriniz...">
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0" style="--bs-table-bg: transparent;">
-                    <thead>
-                        <tr class="text-neon-cyan" style="border-bottom: 2px solid rgba(0, 242, 254, 0.4);">
-                            <th>ZAMAN (UTC)</th>
-                            <th>TOKEN ID</th>
-                            <th>AĞ KATMANI (IP)</th>
-                            <th>TEHDİT SEVİYESİ</th>
-                            <th>EKRAN BOYUTU</th>
-                            <th>SİSTEM DİLİ</th>
-                            <th>CİHAZ PARMAK İZİ (SHA-256)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTableBody">
-                        {% if not hits %}
-                        <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">Ağ üzerinde herhangi bir anomali algılanmadı. Sistem dinlemede...</td>
-                        </tr>
-                        {% endif %}
-                        {% for hit in hits %}
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <td><small class="font-orbitron">{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
-                            <td><span class="badge bg-dark text-info border border-secondary">{{ hit.token_id[:13] }}...</span></td>
-                            <td>
-                                <strong>{{ hit.ip_address }}</strong>
-                                {% if hit.is_vpn_or_tor %}
-                                <span class="d-block text-danger small" style="font-size: 10px;">🚨 PROXY/DATACENTER NODE</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if hit.threat_level.value == 'Critical' %}
-                                <span class="badge bg-danger text-white border border-danger px-2">CRITICAL</span>
-                                {% else %}
-                                <span class="badge bg-warning text-black border border-warning px-2">HIGH</span>
-                                {% endif %}
-                            </td>
-                            <td><small>{{ hit.screen_resolution or 'CLI Tool / Script' }}</small></td>
-                            <td><small class="text-muted">{{ hit.system_languages or 'N/A' }}</small></td>
-                            <td style="font-size: 11px; color: #64748b; font-family: monospace;">{{ hit.browser_fingerprint }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
-    <audio id="alertSiren" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
+    <audio id="sirenAudio" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
 
     <script>
-        // 1. CANLI FİLTRE MOTORU
-        document.getElementById('tableSearch').addEventListener('keyup', function() {
-            let searchVal = this.value.toLowerCase();
-            let rows = document.querySelectorAll('#logTableBody tr');
-            rows.forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(searchVal) ? '' : 'none';
+        // 1. ANLIK LOKAL ARMA VE FILTRELEME MOTORU
+        document.getElementById('meshSearch').addEventListener('keyup', function() {
+            let val = this.value.toLowerCase();
+            document.querySelectorAll('#logMeshBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
             });
         });
 
-        // 2. KUVVETLİ HTML5 CANVAS ASKERİ RADAR ANİMASYONU
-        const canvas = document.getElementById('radarCanvas');
+        // 2. INTERAKTİF FIREWALL ENGELLEME KODU YAZDIRICI
+        function selectAttacker(ip, iptables, snort, pfsense) {
+            document.getElementById('ipTablesZone').value = iptables;
+            document.getElementById('snortZone').value = snort;
+            document.getElementById('pfZone').value = pfsense;
+        }
+
+        // 3. ARKA PLAN CANLI TERMİNAL AKIŞ SİMÜLASYONU
+        const sysLogs = [
+            "INFO [CORE] Initializing secure telemetry listener mesh...",
+            "SUCCESS [DB] SQlite core connector validated. Integrity check: OK",
+            "INFO [IPS] Auto-Mitigation engine hooked to netfilter pipeline.",
+            "AUDIT [SYSTEM] Active Honeytoken deployment matrix listening on 0.0.0.0:5000",
+            "INFO [COMPLIANCE] OWASP Top 10 API route protection verified.",
+            "SUCCESS [MESH] In-memory Datacenter IP CIDR lookup block loaded."
+        ];
+        
+        let termBox = document.getElementById('termStream');
+        sysLogs.forEach((log, index) => {
+            setTimeout(() => {
+                termBox.innerHTML += `<div><span style='color:#39ff14'>[${new Date().toISOString().slice(11,19)}]</span> ${log}</div>`;
+                termBox.scrollTop = termBox.scrollHeight;
+            }, index * 800);
+        });
+
+        // Eğer yeni bir alarm varsa terminal akışına kırmızı siber olay uyarısını fırlat
+        if(parseInt("{{ total_hits or 0 }}") > 0) {
+            setTimeout(() => {
+                termBox.innerHTML += `<div style='color:#ff2a5f; font-weight:bold;'><span style='color:#ff2a5f'>[ALERT]</span> CRITICAL DECEPTION TUZAĞI TETİKLENDİ! Forensic artifacts captured.</div>`;
+                termBox.scrollTop = termBox.scrollHeight;
+            }, 5000);
+        }
+
+        // 4. GELİŞMİŞ TAKTİKSEL RADAR ÇİZİMİ
+        const canvas = document.getElementById('radarMesh');
         const ctx = canvas.getContext('2d');
-        let angle = 0;
+        let sweepAngle = 0;
 
-        function drawRadar() {
+        function drawTacticalRadar() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let cx = canvas.width / 2;
-            let cy = canvas.height / 2;
-            let r = canvas.width / 2 - 5;
+            let cx = canvas.width / 2; let cy = canvas.height / 2; let r = canvas.width / 2 - 5;
 
-            // Arka Plan Çemberleri
-            ctx.strokeStyle = 'rgba(0, 242, 254, 0.2)';
-            ctx.lineWidth = 1;
-            for(let i = 1; i <= 3; i++) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, (r / 3) * i, 0, Math.PI * 2);
-                ctx.stroke();
+            // Grid Çizgileri
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.15)'; ctx.lineWidth = 1;
+            for(let i = 1; i <= 4; i++) {
+                ctx.beginPath(); ctx.arc(cx, cy, (r / 4) * i, 0, Math.PI * 2); ctx.stroke();
             }
+            ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
 
-            // Radar Çapraz Tarama Çizgileri
-            ctx.beginPath();
-            ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy);
-            ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r);
-            ctx.stroke();
-
-            // Dönen Tarama Işığı (Sweep)
-            ctx.save();
-            ctx.translate(cx, cy);
-            ctx.rotate(angle);
-            let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-            gradient.addColorStop(0, 'rgba(0, 242, 254, 0.4)');
-            gradient.addColorStop(1, 'rgba(0, 242, 254, 0)');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.arc(0, 0, r, 0, Math.PI / 4);
-            ctx.lineTo(0, 0);
-            ctx.fill();
+            // Sweep Tarama Işığı
+            ctx.save(); ctx.translate(cx, cy); ctx.rotate(sweepAngle);
+            let grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+            grad.addColorStop(0, 'rgba(0, 242, 254, 0.3)'); grad.addColorStop(1, 'rgba(0, 242, 254, 0)');
+            ctx.fillStyle = grad; ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0, r, 0, Math.PI / 3); ctx.lineTo(0,0); ctx.fill();
             ctx.restore();
 
-            // Eğer sistemde aktif alarm varsa (total_hits > 0), merkezde kırmızı anomali noktaları çak
-            if (parseInt("{{ total_hits or 0 }}") > 0) {
-                ctx.fillStyle = 'rgba(255, 42, 95, ' + (Math.sin(Date.now() / 100) * 0.5 + 0.5) + ')';
-                ctx.beginPath();
-                ctx.arc(cx + 35, cy - 40, 6, 0, Math.PI * 2); // Simüle edilen saldırgan lokasyonu
-                ctx.fill();
+            // Saldırgan Noktası (Eğer hit varsa kırmızı çak)
+            if(parseInt("{{ total_hits or 0 }}") > 0) {
+                ctx.fillStyle = `rgba(255, 42, 95, ${Math.abs(Math.sin(Date.now() / 200))})`;
+                ctx.beginPath(); ctx.arc(cx + 45, cy - 55, 7, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#ff2a5f'; ctx.stroke();
             }
 
-            angle += 0.015;
-            requestAnimationFrame(drawRadar);
+            sweepAngle += 0.02;
+            requestAnimationFrame(drawTacticalRadar);
         }
-        drawRadar();
+        drawTacticalRadar();
 
-        // 3. JÜRİ SES ALARMI MOTORU TETİKLEYİCİSİ
-        window.addEventListener('DOMContentLoaded', (event) => {
-            let totalHits = parseInt("{{ total_hits or 0 }}");
-            let audioEnabled = document.getElementById('audioToggle').checked;
-            
-            // Eğer yeni bir alarm varsa ve ses açıksa sireni bir kere çaldır
-            if(totalHits > 0 && audioEnabled) {
-                let siren = document.getElementById('alertSiren');
-                siren.play().catch(e => console.log("Ses çalma tarayıcı engeline takıldı, etkileşim gerekiyor."));
+        // 5. SES MOTORU TETİKLEYİCİSİ
+        window.addEventListener('DOMContentLoaded', () => {
+            if(parseInt("{{ total_hits or 0 }}") > 0 && document.getElementById('audioAlarm').checked) {
+                document.getElementById('sirenAudio').play().catch(() => {});
             }
         });
     </script>
