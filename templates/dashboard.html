@@ -57,6 +57,25 @@
         
         .audit-item { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .status-pass { color: var(--neon-green); font-weight: bold; }
+
+        /* ── SİBER MATRİS YENİ ANIMASYON KURALLARI ── */
+        @keyframes cyberLine {
+            0% { background-position: 0% 50%; opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { background-position: 100% 50%; opacity: 0.4; }
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px var(--neon-cyan); border-color: var(--neon-cyan); }
+            100% { box-shadow: 0 0 15px var(--neon-cyan); border-color: var(--neon-cyan); }
+        }
+        @keyframes alertGlow {
+            0% { box-shadow: 0 0 5px var(--neon-red); }
+            100% { box-shadow: 0 0 20px var(--neon-red); }
+        }
+        @keyframes absoluteBlink {
+            0% { background: var(--neon-red); box-shadow: 0 0 5px #fff; }
+            100% { background: var(--neon-green); box-shadow: 0 0 25px var(--neon-green); }
+        }
     </style>
 </head>
 <body>
@@ -153,6 +172,32 @@
                     </div>
                 </div>
 
+                <div class="kill-chain-container" style="margin-top: 5px; margin-bottom: 20px; padding: 15px; background: #010206; border: 1px solid var(--border-color); border-radius: 4px;">
+                    <h4 style="color: var(--neon-cyan); font-family: 'Courier New', monospace; font-size: 11px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
+                        📡 Live Cyber Kill-Chain Deception Mapping
+                    </h4>
+                    <div style="display: flex; justify-content: space-between; position: relative; margin-top: 15px; padding: 0 10px;">
+                        <div style="position: absolute; top: 14px; left: 20px; right: 20px; height: 2px; background: linear-gradient(90deg, var(--neon-cyan) 0%, var(--neon-red) 100%); z-index: 1; animation: cyberLine 2s linear infinite;"></div>
+                        
+                        <div style="text-align: center; z-index: 2;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #0b0c16; border: 2px solid var(--neon-cyan); margin: 0 auto; display: flex; align-items: center; justify-content: center; color: var(--neon-cyan); font-weight: bold; font-size: 11px; animation: pulseGlow 1.5s infinite alternate;">1</div>
+                            <span style="color: #64748b; font-size: 9px; display: block; margin-top: 6px; font-weight: bold;">Recon</span>
+                        </div>
+                        <div style="text-align: center; z-index: 2;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #0b0c16; border: 2px solid var(--neon-cyan); margin: 0 auto; display: flex; align-items: center; justify-content: center; color: var(--neon-cyan); font-weight: bold; font-size: 11px; animation: pulseGlow 1.5s infinite alternate; animation-delay: 0.3s;">2</div>
+                            <span style="color: #64748b; font-size: 9px; display: block; margin-top: 6px; font-weight: bold;">Access</span>
+                        </div>
+                        <div style="text-align: center; z-index: 2;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #0b0c16; border: 2px solid var(--neon-red); margin: 0 auto; display: flex; align-items: center; justify-content: center; color: var(--neon-red); font-weight: bold; font-size: 11px; animation: alertGlow 1s infinite alternate;">3</div>
+                            <span style="color: var(--neon-red); font-size: 9px; display: block; margin-top: 6px; font-weight: bold;">Trigger</span>
+                        </div>
+                        <div style="text-align: center; z-index: 2;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--neon-red); border: 2px solid #fff; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 11px; animation: absoluteBlink 0.5s infinite alternate;">🎯</div>
+                            <span style="color: #fff; font-size: 9px; display: block; margin-top: 6px; font-weight: bold;">ISOLATED</span>
+                        </div>
+                    </div>
+                </div>
+
                 <label class="text-purple" style="font-size: 11px; display: block; margin-bottom: 4px;">Linux Netfilter (IPTables) Block Script:</label>
                 <input type="text" id="ipTablesZone" class="code-area" value="[Satır seçimi bekleniyor...]" readonly>
 
@@ -173,13 +218,11 @@
             const rows = document.querySelectorAll('.attacker-row');
             rows.forEach(function(row) {
                 row.addEventListener('click', function() {
-                    // Tüm IPS ve CTI verileri hatasız dolduruluyor
                     document.getElementById('ipTablesZone').value = this.getAttribute('data-iptables');
                     document.getElementById('snortZone').value = this.getAttribute('data-snort');
                     document.getElementById('pfZone').value = this.getAttribute('data-pfsense');
                     document.getElementById('riskMeter').innerText = '%' + this.getAttribute('data-risk');
                     
-                    // Mr. Robot İfşa Verileri Hücrelere Dağıtılıyor
                     document.getElementById('targetLanIp').innerText = this.getAttribute('data-lanip');
                     document.getElementById('targetHwId').innerText = this.getAttribute('data-hwid');
                     
