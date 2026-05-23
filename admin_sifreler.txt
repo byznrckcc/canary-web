@@ -1,0 +1,29 @@
+======================================================================
+🔒 ISTINYE UNIVERSITY // INTERNAL DEV-OPS & CORE NETWORK ACCESS MATRIX
+⚠️ RESTRICTED DATA - AUTHORIZED CYBER SECURITY STAFF ONLY
+======================================================================
+
+[SYSTEM ARCHITECTURE INFO]
+Subnet Mask: 10.0.2.0/24
+Gateway Node: 10.0.2.1
+Primary DMZ: 127.0.0.1
+
+[PRODUCTION DATABASE MESH SERVER]
+Database Engine: PostgreSQL / SQLite v3 Cluster
+Host Instance: 127.0.0.1
+Service Port: 5000
+Default User: admin_root
+Access Level: Root Privileges (Read/Write/Execute)
+
+[ACTIVE SESSION AUTHENTICATION TOKEN - BREAKGLASS CREDENTIALS]
+Hata: Doğrudan terminal bağlantısı (SSH) geçici olarak kilitlenmiştir.
+Sisteme ve veri tabanına erişim sağlamak için tarayıcı üzerinden 
+aşağıdaki güvenli senkronizasyon linkini doğrulamalısınız:
+
+👉 http://127.0.0.1:5000/t/db-admin-leak-token
+
+----------------------------------------------------------------------
+[BACKUP CLUSTER NODE]
+Backup Host: 127.0.0.1:5001 (Offline - Sync Mode Active)
+Last Replication Timestamp: UTC 2026-05-23
+======================================================================
