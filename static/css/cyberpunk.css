@@ -1,0 +1,56 @@
+/* static/css/cyberpunk.css - OffSec Inspired Tactical Stylesheet */
+:root {
+    --bg-dark: #020308;
+    --bg-card: #080a14;
+    --purple-main: #6366f1;
+    --purple-glow: rgba(99, 102, 241, 0.3);
+    --neon-cyan: #00f2fe;
+    --neon-red: #ff2a5f;
+    --neon-green: #39ff14;
+    --border-color: #161b33;
+}
+
+body { 
+    background: radial-gradient(circle at top right, #160d33, #04050a, #010103) !important; 
+    color: #f1f5f9 !important; 
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    margin: 0; padding: 25px; min-height: 100vh; overflow-x: hidden;
+}
+
+.header-cyber {
+    background-color: var(--bg-card); border: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--purple-main); padding: 20px; border-radius: 8px; margin-bottom: 25px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 0 25px var(--purple-glow);
+}
+
+.text-neon { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(0, 242, 254, 0.4); font-weight: bold; }
+.text-red { color: var(--neon-red); text-shadow: 0 0 8px rgba(255, 42, 95, 0.4); font-weight: bold; }
+.text-purple { color: var(--purple-main); font-weight: bold; }
+
+.grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px; }
+.card-cyber { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.7); }
+
+.metric-title { color: #64748b; font-size: 11px; font-weight: bold; display: block; letter-spacing: 0.5px; }
+.metric-value { font-size: 44px; font-weight: bold; margin-top: 5px; font-family: sans-serif; }
+
+.terminal-stream { height: 110px; overflow-y: auto; background-color: #010204; border: 1px solid var(--border-color); color: var(--neon-green); padding: 10px; font-size: 11px; border-radius: 4px; line-height: 1.5; }
+
+.main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+.layout-left { flex: 2; min-width: 60%; }
+.layout-right { flex: 1; min-width: 35%; }
+
+.table-container { overflow-x: auto; margin-top: 15px; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { color: var(--neon-cyan); border-bottom: 2px solid var(--border-color); padding: 14px 10px; font-size: 12px; font-weight: bold; }
+td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; color: #e2e8f0; }
+
+tr.attacker-row { cursor: pointer; transition: background 0.2s; }
+tr.attacker-row:hover { background-color: rgba(99, 102, 241, 0.15) !important; }
+
+.code-area { width: 100%; background-color: #010204; color: var(--neon-green); border: 1px solid var(--border-color); padding: 10px; font-family: monospace; font-size: 11px; border-radius: 4px; box-sizing: border-box; margin-bottom: 15px; display: block; resize: none; }
+.btn-cyber { background: linear-gradient(45deg, var(--purple-main), #4338ca); border: 1px solid var(--neon-cyan); color: white; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; transition: all 0.3s; font-family: monospace; }
+.btn-cyber:hover { box-shadow: 0 0 15px var(--neon-cyan); color: var(--neon-cyan); transform: translateY(-1px); }
+
+.audit-item { display: flex; justify-content: space-between; font-size: 12px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.status-pass { color: var(--neon-green); font-weight: bold; }
