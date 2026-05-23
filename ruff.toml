@@ -1,0 +1,19 @@
+# ruff.toml - Enterprise SAST & Code Quality Configuration
+target-version = "py311"
+line-length = 120
+
+[lint]
+# OWASP ve Güvenli Kodlama için kritik kuralları aktif ediyoruz
+select = [
+    "E",   # Pycodestyle hataları
+    "F",   # Pyflakes taramaları
+    "S",   # Bandit (Siber Güvenlik Zafiyet Tarayıcısı Kuralları)
+    "B",   # Bugbear tasarım hataları
+    "A",   # Shadowing koruması
+    "SEC", # Güvenli şifreleme ve tırnak kontrolü kuralları
+]
+
+ignore = ["S101"] # Test assert dosyaları istisnası
+
+[lint.bandit]
+hardcoded-tmp-directory = ["/tmp", "/var/tmp"]
