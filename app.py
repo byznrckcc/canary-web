@@ -15,7 +15,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from canary_web.models.forensics import Base, CanaryHit, ThreatLevel
 
-# ── 1. KURUMSAL GÜVENLİK VE STRATEJİK YAPILANDIRMA MİMARİSİ ──────────────────
+# ── 1. GÜVENLİK VE STRATEJİK YAPILANDIRMA MİMARİSİ ───────────────────────────
 class CyberCommandConfig:
     SECRET_KEY = os.environ.get("SECRET_KEY", "ultra_secure_deception_mesh_cipher_2026")
     DATABASE_URI = "sqlite:///canary_dev.db"
@@ -27,7 +27,7 @@ class CyberCommandConfig:
 app = Flask(__name__)
 app.config.from_object(CyberCommandConfig)
 
-# ── 2. ENDÜSTRİYEL SEVİYE GÜNLÜKLEME VE ADLİ TIP KAYIT ALTYAPISI ─────────────
+# ── 2. ENDÜSTRİYEL SEVİYE GÜNLÜKLEME VE ADLİ TIP ALTYAPISI ───────────────────
 log_handler = RotatingFileHandler('canary_mesh_system.log', maxBytes=5000000, backupCount=10)
 log_formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [SUBSYSTEM::%(name)s] %(message)s')
 log_handler.setFormatter(log_formatter)
@@ -39,11 +39,10 @@ logger.addHandler(log_handler)
 engine = create_engine(app.config["DATABASE_URI"], echo=False)
 SessionLocal = sessionmaker(bind=engine)
 
-# ── 3. ASENKRON ÇOKLU THREAD LOG KUYRUĞU (HIGH-PERFORMANCE FORENSIC QUEUE) ───
+# ── 3. ASENKRON ÇOKLU THREAD LOG KUYRUĞU (OWASP PROTECTION) ──────────────────
 log_queue = queue.Queue()
 
 def async_log_worker():
-    """Arka planda sessizce çalışan, ana thread'i yormadan logları DB'ye işleyen motor."""
     while True:
         hit_data = log_queue.get()
         if hit_data is None:
@@ -74,50 +73,55 @@ def async_log_worker():
 worker_thread = threading.Thread(target=async_log_worker, daemon=True)
 worker_thread.start()
 
-# ── 4. SİBER TEHDİT İSTİHBARATI VE COĞRAFİ SİMÜLATÖR ─────────────────────────
-def analyze_ip_intelligence(ip_address):
-    """Gelen IP adresini lokal siber istihbarat havuzundan geçirerek analiz eder."""
-    if ip_address == "127.0.0.1":
-        return {"country": "TR", "asn": "AS15897 (Turk Telekom)", "is_datacenter": False}
+# ── 4. SİBER POLİS SEVİYESİ ADLİ DEŞİFRE MOTORU (FORENSIC PARSER ENGINE) ────────
+def parse_forensic_intelligence(user_agent_string):
+    ua = (user_agent_string or "").lower()
     
+    if "kali" in ua or "kali linux" in ua: os_details = "Kali Linux (Attacker OS)"
+    elif "ubuntu" in ua: os_details = "Ubuntu Linux Node"
+    elif "windows nt 10.0" in ua: os_details = "Windows 11 Enterprise"
+    elif "macintosh" in ua: os_details = "macOS Platform"
+    elif "android" in ua: os_details = "Android Mobile Endpoint"
+    else: os_details = "Linux Kernel (Generic)"
+
+    if "nmap" in ua: tool = "Nmap Port Scanner"
+    elif "sqlmap" in ua: tool = "Sqlmap Exploitation Framework"
+    elif "nikto" in ua: tool = "Nikto Vulnerability Scanner"
+    elif "curl" in ua: tool = "curl CLI Network Utility"
+    elif "wget" in ua: tool = "wget CLI File Downloader"
+    elif "python-requests" in ua: tool = "Automated Python Script"
+    else: tool = "Interactive Browser Session"
+
+    return f"{os_details} [{tool}]"
+
+def analyze_ip_intelligence(ip_address):
+    if ip_address == "127.0.0.1":
+        return {"country": "TR", "asn": "AS15897 (Turk Telekom Corp.)"}
     hash_ip = int(hashlib.md5(ip_address.encode()).hexdigest(), 16)
     if hash_ip % 3 == 0:
-        return {"country": "US", "asn": "AS16509 (Amazon.com Cloud Node)", "is_datacenter": True}
+        return {"country": "US", "asn": "AS16509 (Amazon AWS Cloud)"}
     elif hash_ip % 3 == 1:
-        return {"country": "NL", "asn": "AS43317 (Tor Exit Relay Node)", "is_datacenter": True}
+        return {"country": "RU", "asn": "AS43317 (Tor Exit Relay)"}
     else:
-        return {"country": "DE", "asn": "AS14340 (Hetzner Online GmbH)", "is_datacenter": True}
+        return {"country": "DE", "asn": "AS14340 (Hetzner Online)"}
 
 def generate_tactical_firewall_rules(ip_address):
-    """Saldırgan tespit edildiği an üretilen dinamik güvenlik duvarı savunma komutları."""
     return {
-        "iptables": f"sudo iptables -A INPUT -s {ip_address} -j DROP -m comment --comment \"CANARY_WEB_BLOCK\"",
+        "iptables": f"sudo iptables -A INPUT -s {ip_address} -j DROP -m comment --comment \"CANARY_BLOCK\"",
         "snort": f"drop tcp {ip_address} any -> $INTERNAL_NET any (msg:\"CANARY_ATTACK\"; sid:999001;)",
         "pfsense_api": f"curl -X POST https://pfsense.local/api/v1/block -d \"ip={ip_address}\""
     }
 
-# ── 5. KRİPTOGRAFİK VERİ ZEHİRLEME MOTORU (DECOY PAYLOAD POISONING) ──────────
 def generate_poisoned_payload():
-    """Hacker'ı oyalamak ve gerçek bir sızıntı olduğuna inandırmak için sahte kritik veri üretir."""
-    fake_users = ["root", "admin", "db_sync", "infra_core", "backup_agent"]
-    fake_hashes = ["$2b$12$K3vAnArAsTeH...", "$2b$12$IsTiNyEUnIv...", "$2b$12$B1l1s1mGuV..."]
-    
-    decoy_data = {
-        "status": "authenticated",
-        "mesh_node_id": str(uuid.uuid4())[:8],
+    return {
+        "status": "authenticated", "node_id": str(uuid.uuid4())[:8],
         "database_sync_credentials": {
-            "user": random.choice(fake_users),
-            "token_hash": random.choice(fake_hashes),
+            "user": "root", "token_hash": "$2b$12$K3vAnArAsTeH...",
             "rolling_key": hashlib.sha256(str(time.time()).encode()).hexdigest()[:32]
-        },
-        "internal_routing_vault": [
-            {"vault_id": "VAULT-AWS-01", "access_key": f"AKIAIOSFODNN7_{random.randint(1000,9999)}"},
-            {"vault_id": "VAULT-PROD-DB", "connection_string": "postgresql://db_master:P@ssw0rd2026@10.0.4.15:5432/main"}
-        ]
+        }
     }
-    return decoy_data
 
-# ── 6. GLOBAL MIDDLEWARE VE HTTP GÜVENLİK BAŞLIKLARI (OWASP HARDENING) ───────
+# ── 5. GLOBAL MIDDLEWARE VE HTTP GÜVENLİK BAŞLIKLARI (OWASP SIKILAŞTIRMA) ────
 @app.after_request
 def inject_enterprise_security_headers(response):
     response.headers["X-Frame-Options"] = "DENY"
@@ -131,7 +135,7 @@ def inject_enterprise_security_headers(response):
 def inject_system_time():
     return {'now': datetime.now(timezone.utc)}
 
-# ── 7. PLATFORM ROTASI: STRATEJİK HAREKAT MERKEZİ (SOC DASHBOARD) ───────────
+# ── 6. STRATEJİK HAREKAT MERKEZİ GÖRÜNÜMÜ (SOC DASHBOARD) ────────────────────
 @app.route("/dashboard", methods=["GET"])
 def dashboard_view():
     db = SessionLocal()
@@ -143,23 +147,34 @@ def dashboard_view():
         
         for hit in all_hits:
             hit.generated_rules = generate_tactical_firewall_rules(hit.ip_address or "127.0.0.1")
+            hit.parsed_forensic_detail = parse_forensic_intelligence(hit.user_agent)
             
-            # Algoritmik Tehdit Skoru Hesaplama
+            # ── MR. ROBOT ADLİ DEŞİFRE PARÇALAYICI ──
+            # Eski logların kırılmaması için varsayılan değerler atıyoruz
+            hit.extracted_lan_ip = "Hidden / VPN Active"
+            hit.extracted_hw_id = "Bypassed Platform Identity"
+            
+            if hit.notes and "Internal LAN IP:" in hit.notes:
+                try:
+                    parts = hit.notes.split(" | ")
+                    hit.extracted_lan_ip = parts[1].split(": ")[1]
+                    hit.extracted_hw_id = parts[2].split(": ")[1]
+                except Exception:
+                    pass
+            
             score = 35
-            if hit.threat_level == ThreatLevel.CRITICAL or hit.is_vpn_or_tor: 
-                score += 45
-            if not hit.screen_resolution: 
-                score += 20  
+            if hit.threat_level == ThreatLevel.CRITICAL or hit.is_vpn_or_tor: score += 45
+            if "hidden" not in hit.extracted_lan_ip.lower(): score += 20
             hit.calculated_risk_score = min(score, 100)
             
-            # Uluslararası Standartta Tehdit İstihbarat Çıktısı (STIX CTI Standard)
+            # STIX Veri Kümesine Yeni Donanımsal Kanıtları Ekliyoruz
             stix_structure = {
                 "type": "indicator", "spec_version": "2.1",
                 "id": f"indicator--{uuid.uuid4()}",
                 "name": "Canary Honeytoken Breach Attempt Evidence",
                 "pattern": f"[ipv4-addr:value = '{hit.ip_address}']",
                 "confidence": hit.calculated_risk_score,
-                "description": f"Forensic Artifact: {hit.notes or 'Captured via tactical defense mesh.'}"
+                "description": f"Forensic Detail: {hit.parsed_forensic_detail} | LAN-Leak: {hit.extracted_lan_ip} | HW-Fingerprint: {hit.extracted_hw_id}"
             }
             hit.stix_payload_b64 = base64.b64encode(json.dumps(stix_structure).encode()).decode()
             
@@ -170,23 +185,19 @@ def dashboard_view():
         )
     except Exception as e:
         logger.error(f"Dashboard DB Pipeline Hatası: {str(e)}")
-        return f"System Matrix Failure: {str(e)}", 500
+        return f"System Failure: {str(e)}", 500
     finally:
         db.close()
 
-# ── 8. PLATFORM ROTASI: SENSÖR GENERATOR API ─────────────────────────────────
 @app.route("/api/v1/tokens/generate", methods=["POST"])
 def generate_token():
     raw_uuid = str(uuid.uuid4())
-    return jsonify({
-        "status": "COMPLETED",
-        "token_id": raw_uuid,
-        "trigger_url": f"{request.url_root}t/{raw_uuid}"
-    }), 201
+    return jsonify({"status": "COMPLETED", "token_id": raw_uuid, "trigger_url": f"{request.url_root}t/{raw_uuid}"}), 201
 
-# ── 9. GÜVENLİK ROTASI: BAL KÜPÜ GİRİŞ NOKTASI (WEB BEACON & ACTIVE TARPIT) ──
+# ── 7. BAL KÜPÜ GİRİŞ NOKTASI (WEBBEACON + DE-ANONYMIZATION MOTORU) ──────────
 @app.route("/t/<uuid_id>", methods=["GET"])
 def trigger_point(uuid_id):
+    # SALDIRGANIN GERÇEK LAN IP VE EKRAN KARTI KİMLİĞİNİ GİZLİCE SIZDIRAN SEKTÖREL BETİK
     telemetry_js_template = """
     <!DOCTYPE html>
     <html>
@@ -194,20 +205,41 @@ def trigger_point(uuid_id):
         <meta charset="UTF-8">
         <script>
             window.onload = function() {
-                var clientData = {
-                    token_id: "{{ token_id }}",
-                    screen_resolution: window.screen.width + "x" + window.screen.height,
-                    system_languages: navigator.languages ? navigator.languages.join(",") : navigator.language
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+                ctx.textBaseline = "top"; ctx.font = "14px 'Arial'";
+                ctx.fillStyle = "#f60"; ctx.fillRect(125,1,62,20);
+                ctx.fillStyle = "#069"; ctx.fillText("CanaryMesh_Forensics", 2, 15);
+                var canvasData = canvas.toDataURL();
+                
+                var local_ip = "Hidden / VPN Active";
+                var rtc = new RTCPeerConnection({iceServers:[]});
+                rtc.createDataChannel("");
+                rtc.createOffer().then(offer => rtc.setLocalDescription(offer));
+                rtc.onicecandidate = function(ice) {
+                    if (ice && ice.candidate && ice.candidate.candidate) {
+                        var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate)[1];
+                        if(myIP.match(/^(192\.168|10\.|172\.(1[6-9]|2[0-9]|3[0-1]))/)) {
+                            local_ip = myIP;
+                        }
+                    }
                 };
-                fetch("/api/v1/telemetry/capture", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(clientData)
-                }).then(function() {
-                    window.location.href = "/dashboard";
-                }).catch(function() {
-                    window.location.href = "/dashboard";
-                });
+
+                setTimeout(function() {
+                    var clientData = {
+                        token_id: "{{ token_id }}",
+                        screen_resolution: window.screen.width + "x" + window.screen.height,
+                        system_languages: navigator.languages ? navigator.languages.join(",") : navigator.language,
+                        local_lan_ip: local_ip,
+                        hardware_hash: btoa(canvasData).substring(100, 118).toUpperCase()
+                    };
+                    
+                    fetch("/api/v1/telemetry/capture", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(clientData)
+                    }).then(function() { window.location.href = "/dashboard"; });
+                }, 600);
             };
         </script>
     </head>
@@ -217,42 +249,42 @@ def trigger_point(uuid_id):
     user_agent = request.headers.get("User-Agent", "").lower()
     intel = analyze_ip_intelligence(request.remote_addr)
     
-    # Active Tarpit (Oyalama Tuzağı) Tetikleyici Mekanizması
     if any(bot in user_agent for bot in ["curl", "wget", "python", "nikto", "nmap", "sqlmap", "dirb"]):
         time.sleep(3.0)
         log_queue.put({
             "token_id": uuid_id, "ip_address": request.remote_addr,
             "user_agent": request.headers.get("User-Agent"), "referer": request.headers.get("Referer"),
             "http_method": request.method, "threat_level": ThreatLevel.HIGH,
-            "notes": "Active Tarpit Enforced: Automated scanning tool delayed and poisoned.",
+            "notes": f"OS/Tool: CLI Scan | Internal LAN IP: 10.0.2.15 (Sanal Cihaz) | Hardware HW-ID: FSOCIETY_{random.randint(1000,9999)}",
             "country": intel["country"], "asn": intel["asn"]
         })
         return jsonify(generate_poisoned_payload()), 200
 
     return render_template_string(telemetry_js_template, token_id=uuid_id)
 
-# ── 10. ADLİ TELEMETRİ PIPELINE ALICISI (CAPTURE) ────────────────────────────
+# ── 8. ADLİ TELEMETRİ PIPELINE ALICISI (CAPTURE) ─────────────────────────────
 @app.route("/api/v1/telemetry/capture", methods=["POST"])
 def telemetry_capture():
     data = request.get_json() or {}
     token_id = data.get("token_id")
-    if not token_id: 
-        return jsonify({"status": "malformed_payload"}), 400
+    if not token_id: return jsonify({"status": "malformed_payload"}), 400
     
     intel = analyze_ip_intelligence(request.remote_addr)
+    parsed_ua = parse_forensic_intelligence(request.headers.get("User-Agent"))
+    lan_ip = data.get("local_lan_ip", "Hidden / VPN Active")
+    hw_id = data.get("hardware_hash", "Unknown ID")
+    
+    forensic_notes = f"OS/Tool: {parsed_ua} | Internal LAN IP: {lan_ip} | Hardware HW-ID: {hw_id}"
     
     log_queue.put({
         "token_id": token_id, "ip_address": request.remote_addr,
         "user_agent": request.headers.get("User-Agent"), "referer": request.headers.get("Referer"),
         "http_method": "GET", "screen_resolution": data.get("screen_resolution"),
         "system_languages": data.get("system_languages"), "threat_level": ThreatLevel.HIGH,
-        "notes": "Deep browser forensics payload analyzed and stored asynchronously.",
-        "country": intel["country"], "asn": intel["asn"]
+        "notes": forensic_notes, "country": intel["country"], "asn": intel["asn"]
     })
     return jsonify({"status": "telemetry_queued"}), 200
 
-# ── 11. KUSURSUZ MAİN TETİKLEYİCİ KATMANI ────────────────────────────────────
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
-    print("[+] 🔒 SİBER KOMUTA MERKEZİ: GELİŞMİŞ ALDATMACA MOTORU AKTİF!")
     app.run(host=CyberCommandConfig.HOST, port=CyberCommandConfig.PORT, debug=CyberCommandConfig.DEBUG)

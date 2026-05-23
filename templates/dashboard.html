@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canary-Web // Strategic Operations Center</title>
+    <title>Canary-Web // Tactical Command Suite</title>
     <style>
         :root {
             --bg-dark: #04050d;
@@ -34,7 +34,7 @@
         .text-purple { color: var(--purple-main); font-weight: bold; }
 
         .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .card-cyber { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); position: relative; }
+        .card-cyber { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
 
         .metric-title { color: #64748b; font-size: 11px; font-weight: bold; display: block; }
         .metric-value { font-size: 42px; font-weight: bold; margin-top: 5px; font-family: sans-serif; }
@@ -104,13 +104,13 @@
                                 <th>ZAMAN (UTC)</th>
                                 <th>AĞ KATMANI (IP)</th>
                                 <th>TEHDİT ENDEKSİ</th>
-                                <th>TESPİT DETAYI</th>
+                                <th>GELİŞMİŞ ADLİ TESPİT DETAYI</th>
                             </tr>
                         </thead>
                         <tbody id="logMeshBody">
                             {% if not hits %}
                             <tr>
-                                <td colspan="4" style="text-align: center; color: #64748b; padding: 40px;">[CLEAN SYSTEM] Herhangi bir siber saldırı anomalisi algılanmadı.</td>
+                                <td colspan="4" style="text-align: center; color: #64748b; padding: 40px;">[CLEAN SYSTEM] Siber saldırı anomalisi algılanmadı.</td>
                             </tr>
                             {% endif %}
                             {% for hit in hits %}
@@ -119,11 +119,13 @@
                                 data-snort='{{ hit.generated_rules.snort }}'
                                 data-pfsense='{{ hit.generated_rules.pfsense_api }}'
                                 data-risk='{{ hit.calculated_risk_score }}'
-                                data-stix='{{ hit.stix_payload_b64 }}'>
+                                data-stix='{{ hit.stix_payload_b64 }}'
+                                data-lanip='{{ hit.extracted_lan_ip }}'
+                                data-hwid='{{ hit.extracted_hw_id }}'>
                                 <td><small class="text-purple">{{ hit.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
-                                <td><strong>{{ hit.ip_address }}</strong></td>
+                                <td><strong style="color: var(--neon-cyan);">{{ hit.ip_address }}</strong></td>
                                 <td><strong style="color: #ff2a5f;">%{{ hit.calculated_risk_score }}</strong></td>
-                                <td><small style="color: #94a3b8;">{{ hit.screen_resolution or 'Active Tarpit (CLI Bot)' }}</small></td>
+                                <td><small style="color: #e2e8f0; font-weight: bold;">{{ hit.parsed_forensic_detail }}</small></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -133,12 +135,22 @@
         </div>
 
         <div class="layout-right">
-            <div class="card-cyber">
+            <div class="card-cyber" style="border: 1px solid var(--neon-red); box-shadow: 0 0 15px rgba(255,42,95,0.15);">
                 <h3 class="text-neon" style="margin-top: 0; margin-bottom: 10px; font-size: 16px;">🔥 AUTOMATED COUNTER-MEASURES MESH</h3>
                 
-                <div style="background:#010206; padding:10px; border-radius:4px; margin-bottom:15px; border:1px solid var(--border-color);">
-                    <span style="font-size:11px; color:#64748b; font-weight:bold;">TACTICAL RISK ASSESSMENT:</span>
-                    <span id="riskMeter" style="font-size:14px; font-weight:bold; color:var(--neon-red); margin-left:5px;">%0</span>
+                <div style="background:#010206; padding:12px; border-radius:4px; margin-bottom:15px; border:1px solid #ff2a5f;">
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-size:10px; color:#64748b; font-weight:bold; display:block;">TACTICAL RISK ASSESSMENT:</span>
+                        <span id="riskMeter" style="font-size:18px; font-weight:bold; color:var(--neon-red);">%0</span>
+                    </div>
+                    <div style="margin-bottom: 8px; border-top: 1px solid rgba(255,42,95,0.1); padding-top:8px;">
+                        <span style="font-size:10px; color:#64748b; font-weight:bold; display:block;">DE-ANONYMIZED INTERNAL LAN IP (VPN LEAK):</span>
+                        <span id="targetLanIp" style="font-size:13px; font-weight:bold; color:var(--neon-green);">[Seçim Bekleniyor]</span>
+                    </div>
+                    <div style="border-top: 1px solid rgba(255,42,95,0.1); padding-top:8px;">
+                        <span style="font-size:10px; color:#64748b; font-weight:bold; display:block;">HARDWARE SIGNATURE GRAPHIC ID:</span>
+                        <span id="targetHwId" style="font-size:11px; font-weight:bold; color:var(--neon-cyan);">[Seçim Bekleniyor]</span>
+                    </div>
                 </div>
 
                 <label class="text-purple" style="font-size: 11px; display: block; margin-bottom: 4px;">Linux Netfilter (IPTables) Block Script:</label>
@@ -147,8 +159,11 @@
                 <label class="text-purple" style="font-size: 11px; display: block; margin-bottom: 4px;">Snort IDS/IPS Real-Time Drop Signature:</label>
                 <input type="text" id="snortZone" class="code-area" value="[Satır seçimi bekleniyor...]" readonly>
 
+                <label class="text-purple" style="font-size: 11px; display: block; margin-bottom: 4px;">pfSense API Gateway Firewall Controller:</label>
+                <input type="text" id="pfZone" class="code-area" value="[Satır seçimi bekleniyor...]" readonly>
+
                 <label class="text-purple" style="font-size: 11px; display: block; margin-bottom: 4px;">Cyber Threat Intelligence Output (STIX v2.1 JSON):</label>
-                <textarea id="stixZone" class="code-area" rows="5" readonly>[Satır seçimi bekleniyor...]</textarea>
+                <textarea id="stixZone" class="code-area" rows="4" readonly>[Satır seçimi bekleniyor...]</textarea>
             </div>
         </div>
     </div>
@@ -156,12 +171,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const rows = document.querySelectorAll('.attacker-row');
-            
             rows.forEach(function(row) {
                 row.addEventListener('click', function() {
+                    // Tüm IPS ve CTI verileri hatasız dolduruluyor
                     document.getElementById('ipTablesZone').value = this.getAttribute('data-iptables');
                     document.getElementById('snortZone').value = this.getAttribute('data-snort');
+                    document.getElementById('pfZone').value = this.getAttribute('data-pfsense');
                     document.getElementById('riskMeter').innerText = '%' + this.getAttribute('data-risk');
+                    
+                    // Mr. Robot İfşa Verileri Hücrelere Dağıtılıyor
+                    document.getElementById('targetLanIp').innerText = this.getAttribute('data-lanip');
+                    document.getElementById('targetHwId').innerText = this.getAttribute('data-hwid');
                     
                     try {
                         let decodedStix = atob(this.getAttribute('data-stix'));
@@ -180,7 +200,7 @@
                 "INFO  :: Asynchronous logging worker thread started.",
                 "SUCCESS :: Anti-Fingerprinting cipher suite active.",
                 "INFO  :: Active tarpitting matrix listening on /t/<uuid>",
-                "READY :: OWASP secure HTTP headers validator initialized."
+                "READY :: DE-ANONYMIZATION SHIELD DETECTOR TRIGGERED."
             ];
             sysLogs.forEach((log, idx) => {
                 setTimeout(() => {
@@ -194,9 +214,7 @@
             fetch('/api/v1/tokens/generate', { method: 'POST' })
             .then(res => res.json())
             .then(data => {
-                fetch(data.trigger_url).then(() => {
-                    window.location.reload();
-                });
+                fetch(data.trigger_url).then(() => { window.location.reload(); });
             });
         }
     </script>
