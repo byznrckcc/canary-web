@@ -9,7 +9,7 @@ Sistem, geleneksel pasif bal küpü (honeypot) mantığının ötesine geçerek,
 
 ---
 
-## 🚨 ÖZEL ANALİZ: Keyvan Hoca "Siber Dedektiflik" & Polis Mantığı Entegrasyonu
+## 🚨 ÖZEL ANALİZ: "Siber Dedektiflik" & Polis Mantığı Entegrasyonu
 
 Bu proje, bir siber suçlar dedektifinin suçluyu yakalama adımlarını ve "Polis Mantığını" web tabanlı otomatize bir yazılım mimarisine dönüştürür. 
 
