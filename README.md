@@ -1,7 +1,8 @@
 
-
 # 🛰️ Canary-Web: Advanced Active Deception & Forensic De-Anonymization Core
-![Canary-Web Tactical Core Banner](https://img.shields.io/badge/Security-OWASP%20Top%2010%20Hardened-6366f1?style=for-the-badge&logo=target&logoColor=white)
+
+> 💡 **PROJE ÖNİZLEMESİ (SOC DASHBOARD)**
+> > ![Canary-Web SOC Dashboard](dashboard_ss.png)
 
 Canary-Web; kurumsal ağ altyapılarına, kritik veritabanı sızıntı noktalarına veya API sunucularına sızan sofistike tehdit aktörlerini (Black-Hat Hackers) ve otomatize gelişmiş siber tarama robotlarını (APT) erken aşamada tuzağa düşürmek, izole etmek ve adli bilişim (forensics) kanıtları toplamak amacıyla tasarlanmış **Enterprise-Grade Active Deception (Aldatıcı Siber Savunma)** platformudur.
 
@@ -9,53 +10,86 @@ Sistem, geleneksel pasif bal küpü (honeypot) mantığının ötesine geçerek,
 
 ---
 
+## 🚀 EVDE BAĞIMSIZ TEST VE SİMÜLASYON KILAVUZU (Hoca İçin Özel)
+
+Bu proje, harici hiçbir dış sunucu bağımlılığı veya karmaşık ağ ayarı gerektirmeden, **tamamen lokal test ortamında (Localhost / Testbed)** bağımsız olarak simüle edilebilecek şekilde "Tak-Çalıştır" mimaride tasarlanmıştır.
+
+Sistemi evinizde canlı olarak test etmek için aşağıdaki 4 siber polisiye adımını takip etmeniz yeterlidir:
+
+### Adım 1: Bağımlılıkların Kurulması ve Hazırlık
+
+Proje klasörünün içinde bir terminal (CLI) açın ve sistem kütüphanelerini tek komutla kurun:
+
+```bash
+pip install -r requirements.txt
+
+```
+
+*(Sistem otomatik olarak `Flask`, `SQLAlchemy` ve `python-dotenv` paketlerini kuracaktır).*
+
+### Adım 2: Siber Komuta Merkezinin Ateşlenmesi
+
+Sunucuyu yerel ağ dinleme modunda başlatmak için terminalden şu komutu koşturun:
+
+```bash
+python app.py
+
+```
+
+Sunucu `5000` portunda ayağa kalktığında, tarayıcınızdan doğrudan siber harekat merkezine giriş yapın:
+👉 **`http://127.0.0.1:5000/dashboard`**
+
+### Adım 3: Yanal Hareket (Lateral Movement) ve Tuzağın Tetiklenmesi
+
+Siber saldırganın sistem sızmasından sonra kritik kimlik bilgilerini aradığını varsaydığımız aşamadır.
+
+* Proje kök dizininde yer alan **`admin_sifreler.txt`** taktiksel yem dosyasını açın.
+* İçerisinde kurumsal sistem yöneticisine aitmiş gibi duran sahte bağlantı linkine çift tıklayın (veya tarayıcıda açın):
+👉 `http://127.0.0.1:5000/t/db-admin-leak-token`
+* Tarayıcı ekranı `0.6` saniye boyunca asenkron adli analiz yapacak ve ardından sizi otomatik olarak Dashboard'a geri atacaktır.
+
+### Adım 4: Adli Kanıtların Mühürlenmesi ve Maske Düşürme
+
+Dashboard ekranına geri döndüğünüzde, sol alttaki gerçek zamanlı tabloya en son tetiklenen log satırı saniyeler içinde düşecektir.
+
+* Tablonun en üstüne düşen **en yeni log satırının üzerine farenizle bir kez tıklayın.**
+* Tıkladığınız an sağ taraftaki **AUTOMATED COUNTER-MEASURES MESH** paneli canlanacak; sistem **sizin evinizdeki yerel ağ IP adresinizi (LAN IP)** ve tarayıcınızın GPU'sundan sızdırılan **değişmez donanım kimliğinizi (Hardware ID)** şak diye ekrana basarak kendi maskenizin nasıl düştüğünü canlı kanıtlayacaktır.
+
+---
+
 ## 🚨 ÖZEL ANALİZ: "Siber Dedektiflik" & Polis Mantığı Entegrasyonu
 
-Bu proje, bir siber suçlar dedektifinin suçluyu yakalama adımlarını ve "Polis Mantığını" web tabanlı otomatize bir yazılım mimarisine dönüştürür. 
+Bu proje, bir siber suçlar dedektifinin suçluyu yakalama adımlarını ve "Polis Mantığını" web tabanlı otomatize bir yazılım mimarisine dönüştürür.
 
-### 1. Nerede Durman Lazım? (Gözlem Noktası)
-
-* **Polis Dedektifliği:** Ağ trafiğinin geçtiği kritik bir noktada (localhost, gateway veya sunucu önü) konumlanarak Wireshark veya tcpdump gibi sokak köşesinde pusuda beklemek.
-* **Canary-Web Entegrasyonu:** Sistem, ağın en kritik ve saldırgana çekici gelen bal küpü rotasında (`/t/<uuid_id>`) konumlanır. Bir ağ kartı gibi gelen tüm HTTP paket isteklerini pusuda bekleyerek sessizce dinler.
-
-### 2. Neleri Çevirmen Lazım? (Deşifre)
-
-* **Polis Dedektifliği:** Ham veriyi okumak, port numaralarını (80/443 HTTP) çevirmek, IP adreslerini çözerek kime ait olduğunu, ülkesini, VPN durumunu bulmak ve zaman damgalarını bağlamak.
-* **Canary-Web Entegrasyonu:** Gelen isteklerin ham `User-Agent` ve paket başlıklarını okur. Entegre coğrafi istihbarat simülatörü (`analyze_ip_intelligence`) ile IP'nin hangi ülkeye ait olduğunu, ASN ağ sağlayıcısını, veri merkezinden gelip geçmediğini ve tam UTC zaman damgasıyla veri tabanına işler.
-
-### 3. Çevirince Neyi İnceleyeceksin? (Tespit & Tehdit Analizi)
-
-* **Polis Dedektifliği:** Anormallik aramak, port tarama desenlerini yakalamak, banner toplama girişimlerini izlemek, bilinen saldırı imzalarını (signature) denetlemek ve davranışsal analiz yapmak.
-* **Canary-Web Entegrasyonu:** Gelişmiş adli deşifre motoru (`parse_forensic_intelligence`) sayesinde isteklerin normal bir kullanıcı mı yoksa `Nmap`, `Sqlmap`, `Nikto` veya `curl` gibi otomatize bir siber silah mı olduğunu saniyeler içinde analiz eder. Algoritmik Tehdit Skoru ile saldırganın risk endeksini (%0-%100) hesaplar.
-
-### 4. Polis Mantığıyla Özet Sinerjisi (The Cyber Forensics Matrix)
-
-Adli bilişim matrisi sistem arayüzünde şu şekilde vücut bulur:
-
-* **Olay Yeri:** Ağ trafiğinin geçtiği bal küpü web arayüz noktası (`/t/<uuid_id>`).
-* **Delil:** Gelen/giden ham paketlerden sızdırılan tarayıcı meta dataları, çözünürlük ve dil parametreleri.
-* **Tercüman:** Ham `User-Agent` string'lerini anlamlı siber araç isimlerine dönüştüren *Forensic Parser Engine* ve verinin uluslararası dili olan *STIX v2.1 CTI Compiler*.
-* **Kanıt:** Algılanan anormal tarama desenleri, risk skorları ve de-anonim edilmiş gerçek kimlikler.
-* **Tutuklama:** Tespit edilen anomalinin SOC paneline raporlanması, `IPTables DROP` kurallarının, `Snort Drop` imzalarının ve `pfSense API` bloklama payload'larının anında otomatik üretilerek kaynağın engellenmesi.
+| Siber Polis Taktiği | Canary-Web Dijital Karşılığı | Operasyonel Çıktı |
+| --- | --- | --- |
+| **1. Pusuda Bekleme (Gözlem)** | `/t/<uuid_id>` Aktif İstihbarat Rotası | Kritik kavşakta paket dinleme hattı oluşturma. |
+| **2. Telsiz Deşifre (Tercüme)** | *Forensic Parser Engine* Analizi | Ham `User-Agent` verisini siber araç ismine (`Nmap`, `Sqlmap`) çevirme. |
+| **3. Davranışsal İnceleme** | Algoritmik Tehdit Risk Skoru | Tehdit aktörünün tehlike endeksini `%0-%100` arası hesaplama. |
+| **4. Kelepçeleme (Etkisiz Kılma)** | *Automated Counter-Measures* Hattı | `IPTables DROP`, `Snort Signature` ve `pfSense API` engelleme kodlarını anlık üretme. |
 
 ---
 
 ## 🌌 İleri Düzey Teknik Yetenekler (Core Features)
 
-* **🎭 WebRTC VPN De-Anonymization (Maske Düşürücü Matrix):** Saldırgan askeri düzeyde şifrelenmiş VPN veya Tor arkasına saklansa bile, tarayıcıların ham WebRTC mimari açığından faydalanarak arka planda görünmez bir asenkron sorgu (ICE Candidate Leak) tetikler. Yerel ağdaki (LAN) gerçek iç IP adresini (Örn: `192.168.1.105`) ifşa eder.
+* **🎭 WebRTC VPN De-Anonymization (Maske Düşürücü Matrix):** Saldırgan askeri düzeyde şifrelenmiş VPN veya Tor arkasına saklansa bile, tarayıcıların ham WebRTC mimari açığından faydalanarak arka planda görünmez bir asenkron sorgu (`ICE Candidate Leak`) tetikler. Yerel ağdaki (LAN) gerçek iç IP adresini ifşa eder.
 * **🧬 Canvas Hardware Fingerprinting (Donanımsal Parmak İzi):** Cihazın ekran kartı motoruna (GPU) görünmez bir 3D grafik çizdirerek gizli sekmeyle bile değişmeyen benzersiz bir **Hardware SHA-256 Hash ID** üretir ve kalıcı takibe alır.
+* **📡 Live Cyber Kill-Chain Deception Mapping:** Ön yüze entegre edilen hareketli neon animasyon şeması sayesinde, saldırganın keşif (Recon) aşamasından sızma girişimine kadar olan adımlarını anlık haritalandırır ve izole edildiği (`ISOLATED`) kritik saniyeyi SOC analistine görsel olarak sunar.
 * **🧪 Kriptografik Sahte Veri Zehirlemesi (Payload Poisoning):** Tuzağa düşen saldırgana dinamik olarak sahte AWS Cloud Keyleri, kurumsal PostgreSQL şifreleri ve sahte admin JWT token verileri besleyerek (`generate_poisoned_payload`) hacker'ı yanıltır ve siber polise zaman kazandırır.
 * **⏳ Oyalama Tuzağı (Active Tarpitting):** Otomatize scriptleri algıladığı an ağ bağlantısını kasıtlı olarak 3.0 saniye geciktirerek saldırganın terminal kaynaklarını sömürür.
+* **🔒 OWASP Çevresel Değişken İzolasyonu:** Projenin kriptografik gizli anahtarı (`SECRET_KEY`) kod içerisinden tamamen arındırılmış olup, `python-dotenv` kütüphaneyle `.env` dosyasından hafızaya güvenle yüklenir.
 
 ---
 
-## 📂 Proje Klasör Ağacı ve Çoklu Dil Footprint'i
+## 📂 Proje Klasör Ağacı
 
-Projenin modüler mimarisi, GitHub üzerinde zengin bir yazılım dil dağılım matrisi oluşturacak şekilde kurumsal standartlarda parçalanmıştır:
+Projenin modüler mimarisi, GitHub üzerinde kurumsal standartlarda parçalanmıştır:
 
 ```text
 canary-web/
 ├── app.py                     # Kurumsal Çekirdek ve Aktif Savunma Kural Motoru
+├── admin_sifreler.txt         # Saldırganı Yanal Harekette Avlayan Taktiksel Yem Dosyası
+├── requirements.txt           # Bağımsız Çalıştırma ve Bağımlılık Paket Yönetimi
 ├── ruff.toml                  # SAST Statik Kod Analizi Güvenlik Yapılandırması
 ├── healthcheck.sh             # Konteyner Sağlık Koruma ve Adli Yaşam Döngüsü Betiği
 ├── static/
@@ -65,31 +99,6 @@ canary-web/
 │       └── telemetry.js       # Adli Bilişim DOM Etkileşim ve Kilitlenme Çözücü JS Motoru
 └── templates/
     └── dashboard.html         # Siber Operasyon Komuta Merkezi (SOC) Arayüzü
-
-```
-
----
-
-## 🛠️ Kurulum ve Canlı Çalıştırma
-
-Platformun bağımlılıklarını kurmak ve siber savunma ağını devreye almak için sırasıyla aşağıdaki komut mimarisini takip edin:
-
-```bash
-pip install Flask SQLAlchemy
-
-```
-
-Sistemi yerel ağ üzerinde dinleme modunda başlatın:
-
-```bash
-python app.py
-
-```
-
-Yönetim panelini ve siber istihbarat izleme ekranını görüntülemek için tarayıcınızdan aşağıdaki yerel ağ rotasına erişim sağlayın:
-
-```plaintext
-http://127.0.0.1:5000/dashboard
 
 ```
 
