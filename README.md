@@ -10,6 +10,8 @@ Sistem, geleneksel pasif bal küpü (honeypot) mantığının ötesine geçerek,
 
 ---
 
+WELL DONE ! :) @keyvanarasteh 
+
 ## 🚀 EVDE BAĞIMSIZ TEST VE SİMÜLASYON KILAVUZU 
 
 Bu proje, harici hiçbir dış sunucu bağımlılığı veya karmaşık ağ ayarı gerektirmeden, **tamamen lokal test ortamında (Localhost / Testbed)** bağımsız olarak simüle edilebilecek şekilde "Tak-Çalıştır" mimaride tasarlanmıştır.
