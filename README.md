@@ -1,4 +1,21 @@
 
+<p align="center">
+  <img src="auth_min_logo.png" alt="Proje Logosu" width="160">
+</p>
+
+
+# 🏫 İSTİNYE ÜNİVERSİTESİ
+## 🛡️ Meslek Yüksekokulu // Bilişim Güvenliği Teknolojisi Programı
+
+### 👤 Geliştirici Proje Künyesi
+* **Adı Soyadı:** Beyzanur Çakıcı
+* **Öğrenci Numarası:** 2420191032
+* **Bölüm:** Bilişim Güvenliği Teknolojisi
+* **Ders Kodu / Adı:** BGT208 - Güvenli Web Yazılımı Geliştirme
+* **Proje Danışmanı / Hocası:** Öğr. Gör. Keyvan Arasteh
+* **Kapsam:** Güvenli Web Yazılımı Geliştirme Dönem Final Projesi Ödevi
+
+---
 # 🛰️ Canary-Web: Advanced Active Deception & Forensic De-Anonymization Core
 
 > 💡 **PROJE ÖNİZLEMESİ (SOC DASHBOARD)**
