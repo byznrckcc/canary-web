@@ -4,8 +4,6 @@
 </p>
 
 
-# 🏫 İSTİNYE ÜNİVERSİTESİ
-## 🛡️ Meslek Yüksekokulu // Bilişim Güvenliği Teknolojisi Programı
 
 ### 👤 Geliştirici Proje Künyesi
 * **Adı Soyadı:** Beyzanur Çakıcı
