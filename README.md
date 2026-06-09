@@ -1,4 +1,19 @@
 
+<p align="center">
+  <img src="auth_min_logo.png" alt="Proje Logosu" width="160">
+</p>
+
+
+
+### 👤 Geliştirici Proje Künyesi
+* **Adı Soyadı:** Beyzanur Çakıcı
+* **Öğrenci Numarası:** 2420191032
+* **Bölüm:** Bilişim Güvenliği Teknolojisi
+* **Ders Kodu / Adı:** BGT208 - Güvenli Web Yazılımı Geliştirme
+* **Proje Danışmanı / Hocası:** Öğr. Gör. Keyvan Arasteh
+* **Kapsam:** Güvenli Web Yazılımı Geliştirme Dönem Final Projesi Ödevi
+
+---
 # 🛰️ Canary-Web: Advanced Active Deception & Forensic De-Anonymization Core
 
 > 💡 **PROJE ÖNİZLEMESİ (SOC DASHBOARD)**
@@ -10,7 +25,9 @@ Sistem, geleneksel pasif bal küpü (honeypot) mantığının ötesine geçerek,
 
 ---
 
-## 🚀 EVDE BAĞIMSIZ TEST VE SİMÜLASYON KILAVUZU (Hoca İçin Özel)
+WELL DONE ! :) @keyvanarasteh 
+
+## 🚀 EVDE BAĞIMSIZ TEST VE SİMÜLASYON KILAVUZU 
 
 Bu proje, harici hiçbir dış sunucu bağımlılığı veya karmaşık ağ ayarı gerektirmeden, **tamamen lokal test ortamında (Localhost / Testbed)** bağımsız olarak simüle edilebilecek şekilde "Tak-Çalıştır" mimaride tasarlanmıştır.
 
@@ -103,11 +120,3 @@ canary-web/
 ```
 
 ---
-
-## 👤 Geliştirici Proje Künyesi
-
-* **Adı Soyadı:** Beyzanur Çakıcı
-* **Öğrenci Numarası:** 2420191032
-* **Bölüm:** Bilişim Güvenliği Teknolojisi
-* **Kurum:** İstinye Üniversitesi
-* **Ders / Kapsam:** Güvenli Web Geliştirme Final Projesi Ödevi
