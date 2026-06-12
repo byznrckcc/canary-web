@@ -150,6 +150,47 @@ Saldırgan bot (requests, Nikto, Dirbuster vb.) tespit edildiğinde devreye gire
 - HTTP yanıt başlıklarını kasıtlı olarak geciktirir.
 - TCP pencere manipülasyonu ile bağlantıyı açık tutar.
 - Saldırganın kendi CPU/RAM kaynaklarını tüketerek diğer hedefleri taramasını engeller.
+len STIX formatındaki JSON log paketi şu şekildedir:
+
+```json
+{
+  "type": "bundle",
+  "id": "bundle--8f6a394c-e123-4cbb-9bfb-2c4f1c1f728c",
+  "spec_version": "2.1",
+  "objects": [
+    {
+      "type": "indicator",
+      "id": "indicator--bf4a2420-1910-32cf-bgt2-08secureweb",
+      "pattern": "[ipv4-addr:value = '127.0.0.1'] AND [file:name = 'admin_sifreler.txt']",
+      "pattern_type": "stix",
+      "indicator_types": ["malicious-activity"]
+    }
+  ]
+}
+## 🚨 5. Nasıl Yamalanır ve Korunur (How to Patch & Protect)
+
+### A. Acil Eylemler (Immediate Actions)
+
+- **Sırları Döndürün:** Hassas olmayan olarak saklanan tüm sırları acilen döndürün
+  (`DATABASE_URL`, API anahtarları, JWT sırları, SMTP şifreleri).
+- **Hassas Bayrağını Açın:** Vercel panosundaki tüm gizli ortam değişkenlerinde
+  "Sensitive" (Hassas) kilit simgesini etkinleştirin.
+- **OAuth İptali:** Google Yönetici Konsolunda
+  (`Security → API controls → Manage Third-Party App Access`)
+  ele geçirilmiş olan şu Context.ai OAuth İstemci Kimliğini aratın ve
+  izinlerini kalıcı olarak iptal edin:
+  `110671459871-30f1spbu0hptbs60cb4vsmv79i7bbvqj.apps.googleusercontent.com`
+
+### B. Uzun Vadeli Sertleştirme (Long-Term Hardening)
+
+- **En Az Ayrıcalık İlkesi:** Üçüncü taraf araçlara yalnızca gereken minimum
+  OAuth kapsamlarını (scopes) tanımlayın.
+- **FIDO2 Donanım Anahtarları:** Lumma Stealer gibi infostealer zararlı
+  yazılımların çerez hırsızlığı riskine karşı tüm yönetici hesaplarında
+  donanım güvenlik anahtarları zorunlu kılınmalıdır.
+- **EDR Dağıtımı:** Çalışanların Roblox exploit betikleri gibi zararlı dosyaları
+  indirmesini engellemek için tüm uç noktalara EDR
+  (Endpoint Detection and Response) kurulmalıdır.
 
 ---
 
