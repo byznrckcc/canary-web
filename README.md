@@ -19,6 +19,8 @@
 > 💡 **PROJE ÖNİZLEMESİ (SOC DASHBOARD)**
 > > ![Canary-Web SOC Dashboard](dashboard_ss.png)
 
+İzlemek için tıklayın: 🎥 [Project Demo Video](simulation.mp4)
+
 Canary-Web; kurumsal ağ altyapılarına, kritik veritabanı sızıntı noktalarına veya API sunucularına sızan sofistike tehdit aktörlerini (Black-Hat Hackers) ve otomatize gelişmiş siber tarama robotlarını (APT) erken aşamada tuzağa düşürmek, izole etmek ve adli bilişim (forensics) kanıtları toplamak amacıyla tasarlanmış **Enterprise-Grade Active Deception (Aldatıcı Siber Savunma)** platformudur.
 
 Sistem, geleneksel pasif bal küpü (honeypot) mantığının ötesine geçerek, saldırganların maskelerini (VPN/Tor/Proxy) tarayıcı katmanında düşüren aktif bir adli bilişim istihbarat mekanizmasına sahiptir.
@@ -26,6 +28,9 @@ Sistem, geleneksel pasif bal küpü (honeypot) mantığının ötesine geçerek,
 ---
 
 WELL DONE ! :) @keyvanarasteh 
+
+
+İzlemek için tıklayın: 🎥 [Project Demo Video](simulation.mp4)
 
 ## 🚀 EVDE BAĞIMSIZ TEST VE SİMÜLASYON KILAVUZU 
 
